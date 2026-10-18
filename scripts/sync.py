@@ -251,6 +251,22 @@ def no_tera_prose(text: str) -> str:
     return no_tera(CODE_SPAN.sub(span, text))
 
 
+def tera_safe(md: str) -> str:
+    """Markdown with every {{, {% and {# out of Tera's reach."""
+    out = []
+    for kind, _, text in split_fences(md):
+        if kind == "code" and TERA.search(text):
+            lines = text.splitlines()[1:]
+            if lines and FENCE.match(lines[-1]):
+                lines = lines[:-1]
+            out.append("<pre><code>" + no_tera(html_escape("\n".join(lines))) + "</code></pre>\n")
+        elif kind == "prose" and TERA.search(text):
+            out.append(no_tera_prose(text))
+        else:
+            out.append(text)
+    return "".join(out)
+
+
 # ---------------------------------------------------------------- docs
 
 
@@ -560,7 +576,7 @@ def write_catalog(index_url: str, src: Path, out: Path) -> dict:
         requires = t.get("requires") or {}
         readme = ""
         if name in readmes:
-            readme = re.sub(r"\A#\s+.*\n+", "", readmes[name].read_text(encoding="utf-8"))
+            readme = tera_safe(re.sub(r"\A#\s+.*\n+", "", readmes[name].read_text(encoding="utf-8")))
         extra = {
             "version": version,
             "category": t.get("category", ""),
@@ -592,9 +608,37 @@ def write_catalog(index_url: str, src: Path, out: Path) -> dict:
         }
         fm = front_matter({"title": name, "description": t.get("summary", ""), "template": "tool.html"}, extra)
         (out / f"{name}.md").write_text(fm + readme, encoding="utf-8")
-        tools.append(name)
+        tools.append({"name": name, "version": version, "summary": t.get("summary", ""),
+                      "category": extra["category"], "tags": extra["tags"], "program": extra["program"],
+                      "network": extra["network"], "warnings": extra["warnings"], "revoked": extra["revoked"],
+                      "publisher": extra["publisher"], "reviewed_at": extra["reviewed_at"][:10]})
     return {"index_generated_at": index.get("generated_at", ""), "index_sha256": sha256(raw), "tools": tools,
             "catalog": index.get("catalog", "")}
+
+
+# Display names of the catalog's categories; an unknown one is title-cased.
+CATEGORY_NAMES = {
+    "administration": "Administration", "data": "Data", "education": "Education", "finance": "Finance",
+    "geography": "Geography and time", "health": "Health", "language": "Language", "law": "Law",
+    "mathematics": "Mathematics", "media": "Media", "personal": "Personal", "politics_civics": "Politics and civics",
+    "programming": "Programming", "research": "Research", "security": "Security", "writing": "Writing",
+}
+
+
+def catalog_data(cat: dict) -> dict:
+    """The catalog grouped by category, for the catalog index and the home."""
+    groups: dict[str, list[dict]] = {}
+    for t in sorted(cat["tools"], key=lambda t: t["name"]):
+        groups.setdefault(t["category"], []).append(t)
+    categories = [
+        {"slug": slug, "name": CATEGORY_NAMES.get(slug, slug.replace("_", " ").capitalize()),
+         "count": len(tools), "tools": tools}
+        for slug, tools in groups.items()
+    ]
+    categories.sort(key=lambda c: c["name"])
+    return {"generated_at": cat["index_generated_at"], "count": len(cat["tools"]),
+            "network_count": sum(1 for t in cat["tools"] if t["network"]),
+            "programs": sorted({t["program"] for t in cat["tools"]}), "categories": categories}
 
 
 # ---------------------------------------------------------------- main
@@ -618,6 +662,8 @@ def main() -> int:
         docs = Docs(src, sha, args.keep_ceremony_wording, tree)
         n = write_docs(docs, ROOT / "content" / "docs", data, ROOT / "static" / "docs-assets")
         cat = write_catalog(args.index_url, src, ROOT / "content" / "catalog")
+    (data / "catalog.json").write_text(json.dumps(catalog_data(cat), indent=1, ensure_ascii=False), encoding="utf-8")
+    cat["tools"] = [t["name"] for t in cat["tools"]]
     site = {"axlr_version": version, "axlr_commit": sha, "axlr_commit_short": sha[:7],
             "axlr_commit_url": f"{GITHUB}/tree/{sha}", **cat}
     (data / "site.json").write_text(json.dumps(site, indent=1), encoding="utf-8")

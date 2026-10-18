@@ -1,0 +1,6 @@
+<a class="tcard" href="/catalog/{{ t.name }}/" data-name="{{ t.name }}" data-category="{{ c.slug }}" data-program="{{ t.program }}" data-network="{% if t.network %}1{% else %}0{% endif %}" data-reviewed="{{ t.reviewed_at }}" data-text="{{ t.name }} {{ t.summary }} {{ t.tags | join(sep=' ') }} {{ c.name }}">
+  <span class="tcard-top"><span class="tcard-mark cat-{{ c.slug }}" aria-hidden="true">{{ t.name | truncate(length=2, end="") | upper }}</span><span class="tcard-cat">{{ c.name }}</span>{% if t.network %}<span class="tcard-flag" title="Reaches the network">network</span>{% endif %}</span>
+  <span class="tcard-name">{{ t.name }}</span>
+  <span class="tcard-sum">{{ t.summary }}</span>
+  <span class="tcard-foot"><span>{{ t.program }} · {{ t.publisher }}</span><span>v{{ t.version }}</span></span>
+</a>

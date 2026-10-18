@@ -1,45 +1,87 @@
 {% extends "base.html" %}
 {% block content %}
+{%- set cat = load_data(path="data/catalog.json", required=false) %}
 {%- set site = load_data(path="data/site.json", required=false) %}
-<div class="wrap">
-  <header class="page-head">
-    <div class="crumbs"><a href="//">AXLR</a> / Catalog</div>
-    <h1>Pre-forged tools</h1>
-    <p class="lead">{{ section.description }}</p>
-  </header>
-  <div class="grid12">
-    <div class="span7 stack">
-      <div class="prose">{{ section.content | safe }}</div>
-      <h2 class="h2" style="margin-top: 16px">{{ section.pages | length }} tools in the <span class="mono">axlr</span> catalog</h2>
-      <div class="tool-rows">
-        {%- for p in section.pages %}
-        <a class="tool-row" href="{{ p.permalink | safe }}">
-          <span class="t-name">{{ p.title }}</span>
-          <span class="t-sum">{{ p.description }}</span>
-          <span class="t-ver">{{ p.extra.version }} · {{ p.extra.category }}{% if p.extra.revoked %} · revoked{% endif %}</span>
-        </a>
-        {%- endfor %}
-      </div>
-      {% if site %}<p class="source-line">Index generated {{ site.index_generated_at | truncate(length=19, end="") | replace(from="T", to=" ") }} UTC · sha256 {{ site.index_sha256 | truncate(length=16, end="…") }}</p>{% endif %}
-    </div>
-    <aside class="span5 stack">
-      <div class="panel">
-        <span class="eyebrow">INSTALL FROM THE CONSOLE</span>
-<pre class="panel-cmd">/tools search seats
-/tools install seat_allocation
-/tools update
-/tools remove seat_allocation</pre>
-        <p>The install card shows the origin line, the licence, any warning and the forge card: the command, the description, the schema and every file as code. <span class="mono">y</span> writes the files; any other key installs nothing. In normal mode the model can search with <span class="mono">axlr_catalog</span> and ask for an install with <span class="mono">axlr_install_tool</span>, approved like a write.</p>
-        <p><a href="/docs/console/#installing-catalog-tools">Installing catalog tools</a></p>
-      </div>
-      <div class="panel">
-        <span class="eyebrow">PUBLISH YOUR OWN</span>
-<pre class="panel-cmd">/tools keygen
-/tools enroll acme acme_* --contact ops@acme.example
-/tools publish acme_count</pre>
-        <p><a href="/publish/">How publishing works</a> · <a href="/registry/">The registry</a></p>
-      </div>
-    </aside>
+<section class="cat-hero">
+  <div class="wrap">
+    <div class="crumbs"><a href="/">AXLR</a> / Catalog</div>
+    <h1>{% if cat %}{{ cat.count }}{% endif %} pre-forged tools, one command to install</h1>
+    <p class="lead">Tested programs in the exact shape of a forged tool, served from a signed index and installed from the console. Every one passed a policy scan, its own tests in a sandbox without network, and a named reviewer.</p>
+    <form class="cat-search" role="search" onsubmit="return false">
+      <label for="cat-q" class="sr-only">Search the catalog</label>
+      <span class="cat-prompt" aria-hidden="true">/tools search</span>
+      <input id="cat-q" type="search" placeholder="seats, iban, irr, gdpr, unicode…" autocomplete="off">
+    </form>
+    {% if cat %}<p class="cat-stats source-line">{{ cat.count }} tools · {{ cat.categories | length }} categories · {{ cat.count - cat.network_count }} work offline · index of {{ cat.generated_at | truncate(length=10, end="") }}</p>{% endif %}
   </div>
-</div>
+</section>
+
+{% if cat %}
+<section class="wrap cat-featured" id="featured">
+  <div class="cat-head"><h2 class="h2">Featured</h2><a class="card-link" href="#all">All {{ cat.count }} tools ↓</a></div>
+  <div class="tgrid tgrid-4">
+  {%- for name in section.extra.featured %}{% for c in cat.categories %}{% for t in c.tools %}{% if t.name == name %}{% include "partials/tool_card.html" %}{% endif %}{% endfor %}{% endfor %}{% endfor %}
+  </div>
+</section>
+
+<section class="wrap cat-explore" id="all">
+  <div class="cat-head"><h2 class="h2">Explore all tools</h2>
+    <label class="cat-sort"><span class="sr-only">Sort</span>
+      <select id="cat-sort"><option value="name">Name A–Z</option><option value="category">Category</option><option value="reviewed">Recently reviewed</option></select>
+    </label>
+  </div>
+  <div class="cat-layout">
+    <aside class="cat-filters" aria-label="Filters">
+      <h3>Category</h3>
+      <ul class="cat-list">
+        <li><button type="button" class="cat-filter" data-category="" aria-pressed="true"><span>All</span><span class="n">{{ cat.count }}</span></button></li>
+        {%- for c in cat.categories %}
+        <li><button type="button" class="cat-filter" data-category="{{ c.slug }}" aria-pressed="false"><span><i class="dot cat-{{ c.slug }}"></i>{{ c.name }}</span><span class="n">{{ c.count }}</span></button></li>
+        {%- endfor %}
+      </ul>
+      <h3>Runs</h3>
+      <label class="cat-check"><input type="checkbox" id="cat-offline"> Offline only</label>
+      {%- for p in cat.programs %}
+      <label class="cat-check"><input type="checkbox" class="cat-prog" value="{{ p }}" checked> <span class="mono">{{ p }}</span></label>
+      {%- endfor %}
+    </aside>
+    <div class="cat-results">
+      <p class="cat-count source-line" id="cat-count" aria-live="polite">{{ cat.count }} tools</p>
+      <div class="tgrid tgrid-3" id="cat-grid">
+      {%- for c in cat.categories %}{% for t in c.tools %}{% include "partials/tool_card.html" %}{% endfor %}{% endfor %}
+      </div>
+      <p class="cat-empty" id="cat-empty" hidden>No tool matches. Try fewer words, or <a href="/publish/">publish one</a>.</p>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="band cat-how">
+  <div class="wrap cat-steps">
+    <div class="engine">
+      <span class="eyebrow c-copper">1 · INSTALL</span>
+<pre class="cmd">/tools search seats
+/tools install seat_allocation</pre>
+      <p class="text">The install card shows the origin line, the licence, any warning and the forge card: the command, the description, the schema and every file as code. <code>y</code> writes the files; any other key installs nothing.</p>
+    </div>
+    <div class="engine">
+      <span class="eyebrow c-gold">2 · RUN</span>
+<pre class="cmd">axlr_run_tool seat_allocation {…}
+/tools update</pre>
+      <p class="text">Each run is approved as a <code>local_exec</code>, with the arguments checked against the schema. In normal mode the model finds tools itself with <code>axlr_catalog</code> before it forges one.</p>
+    </div>
+    <div class="engine">
+      <span class="eyebrow c-olive">3 · PUBLISH</span>
+<pre class="cmd">/tools enroll acme acme_* --contact ops@acme.example
+/tools publish acme_count</pre>
+      <p class="text">Your own Ed25519 key, an operator's approval once, a scan, sandbox tests and a reviewer for every version. <a href="/publish/">How publishing works</a> · <a href="/registry/">The registry</a></p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap cat-about">
+  <div class="prose">{{ section.content | safe }}</div>
+  {% if site %}<p class="source-line">Index generated {{ site.index_generated_at | truncate(length=19, end="") | replace(from="T", to=" ") }} UTC · sha256 {{ site.index_sha256 | truncate(length=16, end="…") }}</p>{% endif %}
+</section>
 {% endblock content %}
+{% block scripts %}<script src="{{ get_url(path='catalog.js', cachebust=true) }}" defer></script>{% endblock scripts %}

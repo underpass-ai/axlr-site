@@ -3,6 +3,7 @@
 {% block content %}
 {%- set site = load_data(path="data/site.json", required=false) %}
 {%- set catalog = get_section(path="catalog/_index.md") %}
+{%- set cat = load_data(path="data/catalog.json", required=false) %}
 <section id="top" class="wrap grid12 hero">
   <div class="span6 hero-copy">
     <div class="badge">{% if site and site.axlr_version %}{{ site.axlr_version }}{% else %}latest release{% endif %} · pre-1.0 · Apache-2.0</div>
@@ -105,15 +106,20 @@ A 3 · B 3 · C 1 · D 0. D clears the 3 % threshold, but D'Hondt leaves it with
     <h2 class="h2">Catalog and registry</h2>
     <p class="text">Pre-forged tools in the exact shape of a forged tool, served from a signed static index at registry.underpassai.com. Install from the console; publish with your own Ed25519 key after an operator approves your enrolment. Every entry: policy scan, sandbox tests, a named reviewer.</p>
     <div class="tool-rows">
-      {%- for p in catalog.pages %}
+      {%- for name in catalog.extra.featured %}{% if loop.index <= 4 %}{% for p in catalog.pages %}{% if p.title == name %}
       <a class="tool-row" href="{{ p.permalink | safe }}">
         <span class="t-name">{{ p.title }}</span>
         <span class="t-sum">{{ p.description }}</span>
         <span class="t-ver">{{ p.extra.version }} · reviewed</span>
       </a>
-      {%- endfor %}
+      {%- endif %}{% endfor %}{% endif %}{% endfor %}
     </div>
-    <a class="card-link" href="/catalog/">The whole catalog →</a>
+    {%- if cat %}
+    <div class="home-cats" aria-label="Catalog categories">
+      {%- for c in cat.categories %}<a href="/catalog/?category={{ c.slug }}#all"><i class="dot cat-{{ c.slug }}"></i>{{ c.name }}<span class="n">{{ c.count }}</span></a>{% endfor %}
+    </div>
+    {%- endif %}
+    <a class="card-link" href="/catalog/">{% if cat %}All {{ cat.count }} tools{% else %}The whole catalog{% endif %} →</a>
   </div>
   <div id="registry" class="span5 panel">
     <span class="eyebrow">PUBLISH IN FOUR LINES</span>

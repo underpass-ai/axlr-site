@@ -4,6 +4,8 @@ description = "Pre-forged tools for AXLR: tested programs in the exact shape of 
 sort_by = "title"
 template = "catalog.html"
 page_template = "tool.html"
+[extra]
+featured = ["seat_allocation", "business_days", "iban_validate", "npv_irr", "vote_condorcet", "citation_format", "tz_convert", "secrets_scan"]
 +++
 
 A catalog of pre-forged tools serves tested tools in the exact shape of a [forged tool](@/docs/console.md#forged-tools), so neither the person nor the model writes D'Hondt seat allocation or business-day arithmetic again. The console reads the catalog's `index.json`, signed with an Ed25519 key in minisign format, and installs a tool as a forged tool with an origin: the same `.axlr/tools/<name>/` directory, the same per-workspace registry, the same `axlr_run_tool` and the same refusal when a file changes.
