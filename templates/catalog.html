@@ -3,7 +3,7 @@
 {%- set site = load_data(path="data/site.json", required=false) %}
 <div class="wrap">
   <header class="page-head">
-    <div class="crumbs"><a href="{{ get_url(path='/') }}">AXLR</a> / Catalog</div>
+    <div class="crumbs"><a href="//">AXLR</a> / Catalog</div>
     <h1>Pre-forged tools</h1>
     <p class="lead">{{ section.description }}</p>
   </header>
@@ -30,14 +30,14 @@
 /tools update
 /tools remove seat_allocation</pre>
         <p>The install card shows the origin line, the licence, any warning and the forge card: the command, the schema and every file as code. <span class="mono">y</span> writes the files; any other key installs nothing. The model can search with <span class="mono">axlr_catalog</span> and ask for an install with <span class="mono">axlr_install_tool</span>, approved like a write.</p>
-        <p><a href="{{ get_url(path='docs/console/') }}#installing-catalog-tools">Installing catalog tools</a></p>
+        <p><a href="/docs/console/#installing-catalog-tools">Installing catalog tools</a></p>
       </div>
       <div class="panel">
         <span class="eyebrow">PUBLISH YOUR OWN</span>
 <pre class="panel-cmd">/tools keygen
 /tools enroll acme acme_* --contact ops@acme.example
 /tools publish acme_count</pre>
-        <p><a href="{{ get_url(path='publish/') }}">How publishing works</a> · <a href="{{ get_url(path='registry/') }}">The registry</a></p>
+        <p><a href="/publish/">How publishing works</a> · <a href="/registry/">The registry</a></p>
       </div>
     </aside>
   </div>

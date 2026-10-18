@@ -4,7 +4,7 @@
 {%- if site and site.axlr_version %}{% set version = site.axlr_version %}{% else %}{% set version = "v0.10.0" %}{% endif %}
 <div class="wrap">
   <header class="page-head">
-    <div class="crumbs"><a href="{{ get_url(path='/') }}">AXLR</a>{% if page.extra.eyebrow %} / {{ page.extra.eyebrow }}{% endif %}</div>
+    <div class="crumbs"><a href="//">AXLR</a>{% if page.extra.eyebrow %} / {{ page.extra.eyebrow }}{% endif %}</div>
     <h1>{{ page.title }}</h1>
     {% if page.extra.lead %}<p class="lead">{{ page.extra.lead }}</p>{% endif %}
   </header>

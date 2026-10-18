@@ -9,9 +9,9 @@
     <h1>Agentic execution runtime for local model turns, approved tools, sessions and MCP.</h1>
     <p class="lead">AXLR owns the model loop, the tools, the approvals and the sessions. Pair it with KMP for evidence-backed memory and MADE for recorded workflows. Four interfaces, one set of use cases.</p>
     <div class="actions">
-      <a class="btn btn-dark" href="{{ get_url(path='install/') }}">Get started</a>
-      <a class="btn" href="{{ get_url(path='docs/product/') }}">Product contract</a>
-      <a class="btn" href="{{ get_url(path='docs/api/') }}">Service API</a>
+      <a class="btn btn-dark" href="/install/">Get started</a>
+      <a class="btn" href="/docs/product/">Product contract</a>
+      <a class="btn" href="/docs/api/">Service API</a>
     </div>
   </div>
   <div class="span6 terminal" aria-label="A console session that installs and runs a catalog tool">
@@ -32,22 +32,22 @@ A 3 · B 3 · C 1 · D 0. D clears the 3 % threshold, but D'Hondt leaves it with
 <section id="interfaces" class="wrap interfaces">
   <h2 class="h2">Choose your interface</h2>
   <div class="cards4">
-    <a class="card" href="{{ get_url(path='docs/console/') }}">
+    <a class="card" href="/docs/console/">
       <span class="card-name">axlr-tui</span>
       <span class="card-text">Interactive console with work modes, approval cards, saved sessions, local or OpenRouter models.</span>
       <span class="card-link">Console guide →</span>
     </a>
-    <a class="card" href="{{ get_url(path='docs/api/') }}">
+    <a class="card" href="/docs/api/">
       <span class="card-name">axlr-serve</span>
       <span class="card-text">HTTP, gRPC and MCP with mTLS, principal roles, durable operations, event replay. Helm chart.</span>
       <span class="card-link">Service API →</span>
     </a>
-    <a class="card" href="{{ get_url(path='docs/worker/') }}">
+    <a class="card" href="/docs/worker/">
       <span class="card-name">axlr (worker)</span>
       <span class="card-text">One JSON request on stdin, one response on stdout: read, write, edit, exec, plugins.</span>
       <span class="card-link">Worker contract →</span>
     </a>
-    <a class="card" href="{{ get_url(path='docs/library/') }}">
+    <a class="card" href="/docs/library/">
       <span class="card-name">Go library</span>
       <span class="card-text">Typed executor, OpenRouter client and MCP client for your own host.</span>
       <span class="card-link">Library →</span>
@@ -82,7 +82,7 @@ A 3 · B 3 · C 1 · D 0. D clears the 3 % threshold, but D'Hondt leaves it with
 <pre class="cmd">/debug · /delivery · /incident · /plan · /repair · /improve
 /ceremony publish draft_critique_revise-1.0.yaml
 /ceremony draft_critique_revise</pre>
-    <a class="card-link" href="{{ get_url(path='workflows/') }}">All agent workflows →</a>
+    <a class="card-link" href="/workflows/">All agent workflows →</a>
   </div>
   <div class="span7 table-box">
     <table>
@@ -112,7 +112,7 @@ A 3 · B 3 · C 1 · D 0. D clears the 3 % threshold, but D'Hondt leaves it with
       </a>
       {%- endfor %}
     </div>
-    <a class="card-link" href="{{ get_url(path='catalog/') }}">The whole catalog →</a>
+    <a class="card-link" href="/catalog/">The whole catalog →</a>
   </div>
   <div id="registry" class="span5 panel">
     <span class="eyebrow">PUBLISH IN FOUR LINES</span>
@@ -121,7 +121,7 @@ A 3 · B 3 · C 1 · D 0. D clears the 3 % threshold, but D'Hondt leaves it with
 /tools publish acme_count
 → scanned · no findings · tests passed</pre>
     <p>Signed requests, per-key rate limits, no tokens. The operator approves the publisher once; every version is reviewed on its own.</p>
-    <p><a href="{{ get_url(path='publish/') }}">How publishing works</a> · <a href="{{ get_url(path='registry/') }}">The registry</a></p>
+    <p><a href="/publish/">How publishing works</a> · <a href="/registry/">The registry</a></p>
   </div>
 </section>
 {% endblock content %}

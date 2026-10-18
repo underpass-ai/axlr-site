@@ -25,14 +25,14 @@
 <a class="skip" href="#content">Skip to content</a>
 {%- set here = current_path | default(value="/") %}
 <header class="site-header">
-  <a class="brand" href="{{ get_url(path='/') }}" aria-label="AXLR home"><img src="{{ get_url(path='brand/axlr-emblem-light.svg') }}" alt="AXLR" width="101" height="24"></a>
+  <a class="brand" href="//" aria-label="AXLR home"><img src="{{ get_url(path='brand/axlr-emblem-light.svg') }}" alt="AXLR" width="101" height="24"></a>
   <nav class="main-nav" aria-label="Main">
-    <a href="{{ get_url(path='docs/') }}"{% if "/docs/" in here %} aria-current="page"{% endif %}>Docs</a>
+    <a href="/docs/"{% if "/docs/" in here %} aria-current="page"{% endif %}>Docs</a>
     <a href="/#interfaces">Runtime</a>
-    <a href="{{ get_url(path='install/') }}"{% if here == "/install/" %} aria-current="page"{% endif %}>Install</a>
-    <a href="{{ get_url(path='workflows/') }}"{% if here == "/workflows/" %} aria-current="page"{% endif %}>Workflows</a>
-    <a href="{{ get_url(path='catalog/') }}"{% if "/catalog/" in here %} aria-current="page"{% endif %}>Catalog</a>
-    <a href="{{ get_url(path='registry/') }}"{% if here == "/registry/" or here == "/publish/" %} aria-current="page"{% endif %}>Registry</a>
+    <a href="/install/"{% if here == "/install/" %} aria-current="page"{% endif %}>Install</a>
+    <a href="/workflows/"{% if here == "/workflows/" %} aria-current="page"{% endif %}>Workflows</a>
+    <a href="/catalog/"{% if "/catalog/" in here %} aria-current="page"{% endif %}>Catalog</a>
+    <a href="/registry/"{% if here == "/registry/" or here == "/publish/" %} aria-current="page"{% endif %}>Registry</a>
   </nav>
   <div class="header-tools">
     <div class="search" role="search">
@@ -48,7 +48,7 @@
 </main>
 <footer class="site-footer">
   <span>© Underpass · Apache-2.0 · Part of <a href="https://underpassai.com">underpassai.com</a></span>
-  <span><a href="{{ config.extra.registry }}/">registry.underpassai.com</a> · <a href="{{ config.extra.github }}">github.com/underpass-ai/AXLR</a> · <a href="https://github.com/underpass-ai/axlr-site">site source</a></span>
+  <span><a href="/registry/">registry.underpassai.com</a> · <a href="{{ config.extra.github }}">github.com/underpass-ai/AXLR</a> · <a href="https://github.com/underpass-ai/axlr-site">site source</a></span>
 </footer>
 <script src="{{ get_url(path='elasticlunr.min.js') }}" defer></script>
 <script src="{{ get_url(path='search.js', cachebust=true) }}" defer></script>

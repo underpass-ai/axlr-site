@@ -7,7 +7,7 @@
       <h2>{{ g.title }}</h2>
       <ul>
       {%- for l in g.links %}
-        <li><a href="{{ get_url(path=l.path) }}"{% if current_path == l.path %} aria-current="page"{% endif %}>{{ l.title }}</a></li>
+        <li><a href="{{ l.path }}"{% if current_path == l.path %} aria-current="page"{% endif %}>{{ l.title }}</a></li>
       {%- endfor %}
       </ul>
     {%- endfor %}
