@@ -432,6 +432,8 @@ def write_docs(docs: Docs, out: Path, data: Path, static: Path) -> int:
     for f in docs.files:
         title, body, mermaid, desc = docs.convert(f)
         title = docs.words(title) or f
+        if f == "docs/ceremonies.md" and not docs.keep:
+            title = "Agent workflows in the console"  # "Workflows" alone repeats the top-level page
         titles[f] = title
         extra = {"source": f, "source_url": f"{GITHUB}/blob/{docs.sha}/{f}", "mermaid": mermaid}
         if f == "docs/index.md":
