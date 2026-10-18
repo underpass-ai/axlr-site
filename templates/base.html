@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{%- block meta %}
+{%- if page and page.title %}{% set t = page.title ~ " · AXLR" %}{% elif section and section.title and not section.path == "/" %}{% set t = section.title ~ " · AXLR" %}{% else %}{% set t = "AXLR · Agentic execution runtime" %}{% endif %}
+{%- if page and page.description %}{% set d = page.description %}{% elif section and section.description %}{% set d = section.description %}{% else %}{% set d = config.description %}{% endif %}
+<title>{{ t }}</title>
+<meta name="description" content="{{ d }}">
+<meta property="og:title" content="{{ t }}">
+<meta property="og:description" content="{{ d }}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AXLR">
+{%- if current_url %}<link rel="canonical" href="{{ current_url }}"><meta property="og:url" content="{{ current_url }}">{% endif %}
+{%- endblock meta %}
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="{{ get_url(path='brand/axlr-mark.svg') }}" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="{{ get_url(path='site.css', cachebust=true) }}">
+</head>
+<body class="{% block body_class %}{% endblock %}">
+<a class="skip" href="#content">Skip to content</a>
+{%- set here = current_path | default(value="/") %}
+<header class="site-header">
+  <a class="brand" href="{{ get_url(path='/') }}" aria-label="AXLR home"><img src="{{ get_url(path='brand/axlr-emblem-light.svg') }}" alt="AXLR" width="101" height="24"></a>
+  <nav class="main-nav" aria-label="Main">
+    <a href="{{ get_url(path='docs/') }}"{% if "/docs/" in here %} aria-current="page"{% endif %}>Docs</a>
+    <a href="/#interfaces">Runtime</a>
+    <a href="{{ get_url(path='install/') }}"{% if here == "/install/" %} aria-current="page"{% endif %}>Install</a>
+    <a href="{{ get_url(path='workflows/') }}"{% if here == "/workflows/" %} aria-current="page"{% endif %}>Workflows</a>
+    <a href="{{ get_url(path='catalog/') }}"{% if "/catalog/" in here %} aria-current="page"{% endif %}>Catalog</a>
+    <a href="{{ get_url(path='registry/') }}"{% if here == "/registry/" or here == "/publish/" %} aria-current="page"{% endif %}>Registry</a>
+  </nav>
+  <div class="header-tools">
+    <div class="search" role="search">
+      <label for="search" class="sr-only">Search the site</label>
+      <input id="search" type="search" placeholder="Search docs…  /" autocomplete="off" aria-controls="search-results" aria-expanded="false">
+      <ul id="search-results" class="search-results" hidden></ul>
+    </div>
+    <a class="btn btn-outline" href="{{ config.extra.github }}">GitHub</a>
+  </div>
+</header>
+<main id="content">
+{% block content %}{% endblock content %}
+</main>
+<footer class="site-footer">
+  <span>© Underpass · Apache-2.0 · Part of <a href="https://underpassai.com">underpassai.com</a></span>
+  <span><a href="{{ config.extra.registry }}/">registry.underpassai.com</a> · <a href="{{ config.extra.github }}">github.com/underpass-ai/AXLR</a> · <a href="https://github.com/underpass-ai/axlr-site">site source</a></span>
+</footer>
+<script src="{{ get_url(path='elasticlunr.min.js') }}" defer></script>
+<script src="{{ get_url(path='search.js', cachebust=true) }}" defer></script>
+{% block scripts %}{% endblock scripts %}
+</body>
+</html>

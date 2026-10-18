@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap docs-layout">
+  {% include "partials/docs_nav.html" %}
+  <article class="doc-main">
+    <div class="crumbs"><a href="{{ get_url(path='/') }}">AXLR</a> / Docs</div>
+    <h1>{{ section.title }}</h1>
+    <div class="prose">{{ section.content | safe }}</div>
+    {% set meta = section %}{% include "partials/doc_foot.html" %}
+  </article>
+</div>
+{% endblock content %}
+{% block scripts %}{% if section.extra.mermaid %}{% include "partials/mermaid.html" %}{% endif %}{% endblock scripts %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+{%- set site = load_data(path="data/site.json", required=false) %}
+<div class="wrap">
+  <header class="page-head">
+    <div class="crumbs"><a href="{{ get_url(path='/') }}">AXLR</a> / Catalog</div>
+    <h1>Pre-forged tools</h1>
+    <p class="lead">{{ section.description }}</p>
+  </header>
+  <div class="grid12">
+    <div class="span7 stack">
+      <div class="prose">{{ section.content | safe }}</div>
+      <h2 class="h2" style="margin-top: 16px">{{ section.pages | length }} tools in the <span class="mono">axlr</span> catalog</h2>
+      <div class="tool-rows">
+        {%- for p in section.pages %}
+        <a class="tool-row" href="{{ p.permalink | safe }}">
+          <span class="t-name">{{ p.title }}</span>
+          <span class="t-sum">{{ p.description }}</span>
+          <span class="t-ver">{{ p.extra.version }} · {{ p.extra.category }}{% if p.extra.revoked %} · revoked{% endif %}</span>
+        </a>
+        {%- endfor %}
+      </div>
+      {% if site %}<p class="source-line">Index generated {{ site.index_generated_at | truncate(length=19, end="") | replace(from="T", to=" ") }} UTC · sha256 {{ site.index_sha256 | truncate(length=16, end="…") }}</p>{% endif %}
+    </div>
+    <aside class="span5 stack">
+      <div class="panel">
+        <span class="eyebrow">INSTALL FROM THE CONSOLE</span>
+<pre class="panel-cmd">/tools search seats
+/tools install seat_allocation
+/tools update
+/tools remove seat_allocation</pre>
+        <p>The install card shows the origin line, the licence, any warning and the forge card: the command, the schema and every file as code. <span class="mono">y</span> writes the files; any other key installs nothing. The model can search with <span class="mono">axlr_catalog</span> and ask for an install with <span class="mono">axlr_install_tool</span>, approved like a write.</p>
+        <p><a href="{{ get_url(path='docs/console/') }}#installing-catalog-tools">Installing catalog tools</a></p>
+      </div>
+      <div class="panel">
+        <span class="eyebrow">PUBLISH YOUR OWN</span>
+<pre class="panel-cmd">/tools keygen
+/tools enroll acme acme_* --contact ops@acme.example
+/tools publish acme_count</pre>
+        <p><a href="{{ get_url(path='publish/') }}">How publishing works</a> · <a href="{{ get_url(path='registry/') }}">The registry</a></p>
+      </div>
+    </aside>
+  </div>
+</div>
+{% endblock content %}

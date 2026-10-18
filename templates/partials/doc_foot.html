@@ -1,0 +1,5 @@
+{%- set site = load_data(path="data/site.json", required=false) %}
+<div class="doc-foot source-line">
+  <span>From <a href="{{ meta.extra.source_url }}">{{ meta.extra.source }}</a>{% if site %} at <a href="{{ site.axlr_commit_url }}">{{ site.axlr_commit_short }}</a>{% endif %} in underpass-ai/AXLR</span>
+  <a href="{{ meta.extra.source_url }}">View on GitHub</a>
+</div>

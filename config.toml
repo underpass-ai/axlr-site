@@ -1,0 +1,30 @@
+base_url = "https://axlr.underpassai.com"
+title = "AXLR"
+description = "AXLR is Underpass's agentic execution runtime: the model loop, tools, approvals and sessions, with a console, an mTLS service, a JSON worker and a Go library."
+default_language = "en"
+compile_sass = true
+minify_html = false
+build_search_index = true
+generate_feeds = false
+
+[markdown]
+smart_punctuation = false
+external_links_target_blank = false
+
+[markdown.highlighting]
+theme = "github-light"
+
+[slugify]
+paths = "safe"
+anchors = "on"
+
+[search]
+index_format = "elasticlunr_json"
+include_title = true
+include_description = true
+include_content = true
+truncate_content_length = 2000
+
+[extra]
+github = "https://github.com/underpass-ai/AXLR"
+registry = "https://registry.underpassai.com"

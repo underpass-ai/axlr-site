@@ -1,0 +1,17 @@
+{%- set nav = load_data(path="data/docs_nav.json", required=false) %}
+<nav class="docs-nav" aria-label="Documentation">
+  <details id="docs-nav-details" open>
+    <summary>Documentation pages</summary>
+    <div class="nav-groups">
+    {%- for g in nav | default(value=[]) %}
+      <h2>{{ g.title }}</h2>
+      <ul>
+      {%- for l in g.links %}
+        <li><a href="{{ get_url(path=l.path) }}"{% if current_path == l.path %} aria-current="page"{% endif %}>{{ l.title }}</a></li>
+      {%- endfor %}
+      </ul>
+    {%- endfor %}
+    </div>
+  </details>
+</nav>
+<script>if (window.matchMedia('(max-width: 720px)').matches) document.getElementById('docs-nav-details').removeAttribute('open');</script>

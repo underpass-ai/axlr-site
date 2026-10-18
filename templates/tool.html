@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block content %}
+{%- set x = page.extra %}
+<div class="wrap">
+  <header class="page-head">
+    <div class="crumbs"><a href="{{ get_url(path='/') }}">AXLR</a> / <a href="{{ get_url(path='catalog/') }}">Catalog</a> / {{ x.category }}</div>
+    <h1 class="mono">{{ page.title }}</h1>
+    <p class="lead">{{ x.description | default(value=page.description) }}</p>
+    {% if x.revoked %}<p class="note warn"><strong>Revoked.</strong> The index revokes this version; the console refuses to install it.</p>{% endif %}
+  </header>
+  <div class="tool-layout">
+    <div class="doc-main">
+      <div class="prose">
+        <h2 id="install">Install</h2>
+<pre class="cmd">/tools install {{ page.title }}
+/tools install {{ page.title }}@{{ x.version }}</pre>
+        <p>In a console session, or let the model find it: <code>axlr_catalog</code> describes it and <code>axlr_install_tool</code> asks for the same install card. The card reads <code>catalog axlr · {{ page.title }} {{ x.version }} · verified</code> once the index signature, the manifest digest and every file digest check out. Then the model runs it with <code>axlr_run_tool {{ page.title }}</code>; each run is approved as a <code>local_exec</code>.</p>
+
+        {% if page.content %}<h2 id="about">About</h2>
+        {{ page.content | safe }}{% endif %}
+
+        <h2 id="arguments">Arguments</h2>
+        <p>One JSON object on stdin, validated against the schema before the program starts.</p>
+        <table>
+          <thead><tr><th>name</th><th>type</th><th>required</th><th>default</th><th>meaning</th></tr></thead>
+          <tbody>
+          {%- for p in x.params %}
+            <tr><td><code>{{ p.name }}</code></td><td>{{ p.type }}</td><td>{% if p.required %}yes{% else %}no{% endif %}</td><td>{% if p.default %}<code>{{ p.default }}</code>{% endif %}</td><td>{{ p.description }}{% if p.rules %}{% if p.description %}. {% endif %}{{ p.rules }}{% endif %}</td></tr>
+          {%- endfor %}
+          </tbody>
+        </table>
+        <details><summary>Input schema (JSON)</summary>
+<pre><code>{{ x.schema_json }}</code></pre>
+        </details>
+
+        {% if x.example_input %}<h2 id="example">Example</h2>
+        <p>Input</p>
+<pre><code>{{ x.example_input }}</code></pre>
+        {% if x.example_output %}<p>Output (stdout)</p>
+<pre><code>{{ x.example_output }}</code></pre>{% endif %}{% endif %}
+
+        <h2 id="files">Files</h2>
+        <p>The command the install card registers is <code>{{ x.program }} {{ x.args | join(sep=" ") }}</code>, run in the workspace with <code>PATH</code> and <code>HOME</code> as its only environment. Each file's SHA-256 is in the signed index; the console checks them before showing the card and again before writing.</p>
+        {%- for f in x.files %}
+        <details><summary><code>{{ f.name }}</code> · sha256 <span class="digest">{{ f.sha256 }}</span></summary>
+{% if f.text %}<pre><code>{{ f.text }}</code></pre>{% else %}<p>Binary file.</p>{% endif %}
+        </details>
+        {%- endfor %}
+
+        <h2 id="served">Where it is served</h2>
+        <p>The registry serves only AXLR clients, so a browser gets 403; fetch with a User-Agent that starts with <code>axlr</code>:</p>
+<pre><code>curl -A axlr-docs/1.0 -O {{ x.manifest_url }}
+{%- for f in x.files %}
+curl -A axlr-docs/1.0 -O {{ f.url }}
+{%- endfor %}</code></pre>
+      </div>
+    </div>
+    <aside class="tool-side">
+      <div class="panel">
+        <span class="eyebrow">ENTRY</span>
+        <dl class="facts">
+          <dt>version</dt><dd class="mono">{{ x.version }}</dd>
+          <dt>category</dt><dd class="mono">{{ x.category }}</dd>
+          <dt>program</dt><dd class="mono">{{ x.program }}{% if x.program_min_version %} ≥ {{ x.program_min_version }}{% endif %}</dd>
+          <dt>packages</dt><dd>{% if x.packages %}<span class="mono">{{ x.packages | join(sep=", ") }}</span>{% else %}none{% endif %}</dd>
+          <dt>network</dt><dd>{% if x.network %}<span class="warn">reaches the network</span>{% else %}no network{% endif %}</dd>
+          <dt>licence</dt><dd class="mono">{{ x.license }}</dd>
+          <dt>tags</dt><dd><span class="chips">{% for t in x.tags %}<span class="chip">{{ t }}</span>{% endfor %}</span></dd>
+          {% if x.warnings %}<dt>warnings</dt><dd class="warn">{{ x.warnings | join(sep="; ") }}</dd>{% endif %}
+        </dl>
+      </div>
+      <div class="panel">
+        <span class="eyebrow">PROVENANCE</span>
+        <dl class="facts">
+          <dt>publisher</dt><dd class="mono">{{ x.publisher }}</dd>
+          <dt>key id</dt><dd class="digest">{{ x.publisher_key_id }}</dd>
+          <dt>reviewer</dt><dd class="mono">{{ x.reviewer }}</dd>
+          <dt>reviewed</dt><dd class="mono">{{ x.reviewed_at | truncate(length=19, end="") | replace(from="T", to=" ") }} UTC</dd>
+          <dt>manifest</dt><dd class="digest">{{ x.manifest_sha256 }}</dd>
+          <dt>bundle</dt><dd class="digest">{{ x.bundle_sha256 }}</dd>
+          <dt>signature</dt><dd class="digest">{{ x.signature }}</dd>
+        </dl>
+        {% if x.source_note %}<p><strong>Source.</strong> {{ x.source_note }}</p>{% endif %}
+      </div>
+    </aside>
+  </div>
+</div>
+{% endblock content %}
