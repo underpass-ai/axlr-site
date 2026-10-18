@@ -46,6 +46,13 @@ USER_AGENT = "axlr-site-build/1.0 (+https://axlr.underpassai.com)"
 SYNCED = re.compile(r"^docs/(?:[^/]+\.md|runbooks/[^/]+\.md|plans/2026-10-16-[^/]+\.md)$")
 # brand.md documents the retired Spectrum wordmark; the site links it on GitHub.
 EXCLUDED = {"docs/brand.md"}
+# External targets known to be gone or private (404 to the public). A link to
+# one of them, or to a repository path missing at the synced commit, is
+# rendered as its text alone.
+DEAD_LINKS = (
+    "https://github.com/underpass-ai/underpass-runtime",
+    "https://strandsagents.com/1.x/documentation/docs/user-guide/concepts/multi-agent/multi-agent-patterns",
+)
 
 # ---------------------------------------------------------------- fetching
 
@@ -66,11 +73,13 @@ def git(axlr_dir: Path, *args: str) -> bytes:
     return subprocess.run(["git", "-C", str(axlr_dir), *args], check=True, capture_output=True).stdout
 
 
-def fetch_source(args: argparse.Namespace, dest: Path) -> tuple[str, str]:
-    """Extracts docs/ and catalog/ of AXLR into dest; returns (sha, version)."""
+def fetch_source(args: argparse.Namespace, dest: Path) -> tuple[str, str, set[str]]:
+    """Extracts docs/ and catalog/ of AXLR into dest; returns (sha, version,
+    every file and directory path of the commit, to tell dead links)."""
     if args.axlr_dir:
         d = Path(args.axlr_dir)
         sha = git(d, "rev-parse", f"{args.axlr_ref}^{{commit}}").decode().strip()
+        tree = set(git(d, "ls-tree", "-r", "-t", "--name-only", sha).decode().splitlines())
         data = git(d, "archive", "--format=tar", sha, "docs", "catalog")
         with tarfile.open(fileobj=io.BytesIO(data)) as tar:
             tar.extractall(dest, filter="data")
@@ -85,8 +94,11 @@ def fetch_source(args: argparse.Namespace, dest: Path) -> tuple[str, str]:
         data = http_get(f"https://codeload.github.com/{REPO}/tar.gz/{sha}")
         with tarfile.open(fileobj=io.BytesIO(data), mode="r:gz") as tar:
             members = []
+            tree = set()
             for m in tar.getmembers():
                 parts = m.name.split("/", 1)
+                if len(parts) == 2 and parts[1]:
+                    tree.add(parts[1].rstrip("/"))
                 if len(parts) == 2 and (parts[1].startswith("docs/") or parts[1].startswith("catalog/")):
                     m.name = parts[1]
                     members.append(m)
@@ -98,7 +110,7 @@ def fetch_source(args: argparse.Namespace, dest: Path) -> tuple[str, str]:
         version = rel.get("tag_name") or version
     except (urllib.error.URLError, OSError, ValueError) as err:
         print(f"warning: latest release not read ({err}); using {version or 'none'}", file=sys.stderr)
-    return sha, version
+    return sha, version, tree
 
 
 # ---------------------------------------------------------------- vocabulary
@@ -243,8 +255,9 @@ def no_tera_prose(text: str) -> str:
 
 
 class Docs:
-    def __init__(self, src: Path, sha: str, keep_wording: bool):
+    def __init__(self, src: Path, sha: str, keep_wording: bool, tree: set[str]):
         self.src = src
+        self.tree = tree
         self.sha = sha
         self.keep = keep_wording
         self.files = sorted(
@@ -275,7 +288,11 @@ class Docs:
         zo = unique([zola_slug(self.words(h)) for h in hs])
         return dict(zip(gh, zo))
 
-    def rewrite_target(self, current: str, target: str, image: bool) -> str:
+    def rewrite_target(self, current: str, target: str, image: bool) -> str | None:
+        """The site URL for a link, or None when the target is dead."""
+        if target.startswith(DEAD_LINKS):
+            self.warnings.append(f"{current}: dead link removed: {target}")
+            return None
         if re.match(r"^[a-z][a-z0-9+.-]*:", target, re.I) or target.startswith("//"):
             return target
         path, _, frag = target.partition("#")
@@ -303,6 +320,9 @@ class Docs:
             elif not path:
                 return target
             return url
+        if resolved not in self.tree:
+            self.warnings.append(f"{current}: {resolved} does not exist at {self.sha[:7]}; link removed")
+            return None
         kind = "tree" if (self.src / resolved).is_dir() or not posixpath.splitext(resolved)[1] else "blob"
         return f"{GITHUB}/{kind}/{self.sha}/{resolved}" + (f"#{frag}" if frag else "")
 
@@ -336,7 +356,7 @@ class Docs:
                 bang, label, target, ttl = m.group(1), m.group(2), m.group(3), m.group(4) or ""
                 new = self.rewrite_target(f, target, bang == "!")
                 label = self.words(label) if not bang else label
-                store.append(f"{bang}[{label}]({new}{ttl})")
+                store.append(f"{bang}[{label}]({new}{ttl})" if new is not None else label)
                 return f"\x00{len(store) - 1}\x00"
 
             t = LINK.sub(link, t)
@@ -594,8 +614,8 @@ def main() -> int:
     data.mkdir(exist_ok=True)
     with tempfile.TemporaryDirectory() as tmp:
         src = Path(tmp)
-        sha, version = fetch_source(args, src)
-        docs = Docs(src, sha, args.keep_ceremony_wording)
+        sha, version, tree = fetch_source(args, src)
+        docs = Docs(src, sha, args.keep_ceremony_wording, tree)
         n = write_docs(docs, ROOT / "content" / "docs", data, ROOT / "static" / "docs-assets")
         cat = write_catalog(args.index_url, src, ROOT / "content" / "catalog")
     site = {"axlr_version": version, "axlr_commit": sha, "axlr_commit_short": sha[:7],
