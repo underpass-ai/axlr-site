@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AXLR · Home V2 Paper</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0;background:#F4EDE1}
+a{color:#B85C38}a:hover{color:#6B4A2E}
+</style>
+</helmet>
+<div style="font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #2A2018; background: #F4EDE1; min-height: 100%; display: flex; flex-direction: column">
+
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 24px; padding: 22px 48px; border-bottom: 2px solid #2A2018">
+    <a href="#top" aria-label="AXLR home" style="display: flex; align-items: center; text-decoration: none">
+      <img src="/_blob/5e1a1dcbd3385f60212c3c651daa7d1b" alt="AXLR" style="height: 28px; width: auto">
+    </a>
+    <nav aria-label="Main" style="display: flex; flex-wrap: wrap; gap: 28px; margin-left: auto; font-size: 15px; font-weight: 500">
+      <a href="#interfaces" style="text-decoration: none; color: #2A2018">Runtime</a>
+      <a href="#workflows" style="text-decoration: none; color: #2A2018">Workflows</a>
+      <a href="#catalog" style="text-decoration: none; color: #2A2018">Catalog</a>
+      <a href="#docs" style="text-decoration: none; color: #2A2018">Docs</a>
+      <a href="https://github.com/underpass-ai/AXLR" style="text-decoration: none; color: #2A2018">GitHub</a>
+    </nav>
+  </header>
+
+  <section id="top" style="padding: 104px 48px 72px; max-width: 1280px; margin: 0 auto; width: 100%; box-sizing: border-box; display: flex; flex-direction: column; gap: 32px; align-items: flex-start">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #B85C38; letter-spacing: 0.1em">UNDERPASS · AXLR</div>
+    <h1 style="margin: 0; font-family: 'Fraunces', serif; font-weight: 700; font-size: 76px; line-height: 1.0; color: #2A2018; max-width: 980px">Agents that do the work, with the evidence in hand.</h1>
+    <p style="margin: 0; font-size: 22px; line-height: 1.5; color: #5A4A3A; max-width: 720px">AXLR is the execution runtime: the model loop, the tools, the approvals and the sessions. Run it as a console, as a service, as a worker or as a library. KMP keeps the memory. MADE keeps the procedures.</p>
+    <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center">
+      <a href="#install" style="display: inline-flex; align-items: center; min-height: 50px; padding: 0 24px; background: #2A2018; color: #F4EDE1; border-radius: 999px; font-weight: 600; font-size: 16px; text-decoration: none">Get started</a>
+      <a href="#docs" style="display: inline-flex; align-items: center; min-height: 50px; padding: 0 24px; border: 2px solid #2A2018; color: #2A2018; border-radius: 999px; font-weight: 600; font-size: 16px; text-decoration: none">Read the docs</a>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 32px; font-size: 14px; color: #6B4A2E">
+      <span>Apache-2.0</span><span>Linux, macOS, Windows · amd64 and arm64</span><span>Local models or OpenRouter</span><span>MCP and Codex plugins</span>
+    </div>
+  </section>
+
+  <section id="interfaces" style="padding: 0 48px 80px; max-width: 1280px; margin: 0 auto; width: 100%; box-sizing: border-box; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 32px; align-items: stretch">
+    <div style="grid-column: span 4; display: flex; flex-direction: column; justify-content: space-between; padding: 32px; background: #2A2018; border-radius: 16px; color: #F4EDE1; gap: 24px">
+      <img src="/_blob/e0285d9188e87cb3a748ed76ac94e653" alt="AXLR pixel wordmark" style="width: 100%; height: auto; image-rendering: pixelated">
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #C9B08C; letter-spacing: 0.1em">ONE RUNTIME · FOUR WAYS IN</div>
+        <p style="margin: 0; color: #E6DCCB; line-height: 1.55">The same use cases behind every interface. What you approve, where it runs and what it recorded is the same story everywhere.</p>
+      </div>
+    </div>
+    <div style="grid-column: span 8; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+      <sc-for list="{{interfaces}}" as="i" hint-placeholder-count="4">
+        <div style="padding: 24px; background: #FBF7F0; border-radius: 14px; display: flex; flex-direction: column; gap: 8px">
+          <span style="font-family: 'Fraunces', serif; font-weight: 700; font-size: 22px">{{i.name}}</span>
+          <span style="color: #5A4A3A; line-height: 1.55; font-size: 15px">{{i.text}}</span>
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #8A6A3A; margin-top: auto">{{i.meta}}</span>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section aria-label="Three responsibilities" style="padding: 0 48px 80px; max-width: 1280px; margin: 0 auto; width: 100%; box-sizing: border-box">
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px">
+      <div style="padding: 28px; border-top: 6px solid #B85C38; display: flex; flex-direction: column; gap: 10px">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #B85C38; letter-spacing: 0.1em">EXECUTE</div>
+        <div style="font-family: 'Fraunces', serif; font-size: 26px; font-weight: 700">AXLR</div>
+        <p style="margin: 0; color: #5A4A3A; line-height: 1.55">Local tools, MCP servers and forged tools, under an approval policy per effect, in a trusted workspace.</p>
+      </div>
+      <div style="padding: 28px; border-top: 6px solid #D97B2D; display: flex; flex-direction: column; gap: 10px">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #D97B2D; letter-spacing: 0.1em">REMEMBER</div>
+        <div style="font-family: 'Fraunces', serif; font-size: 26px; font-weight: 700">KMP</div>
+        <p style="margin: 0; color: #5A4A3A; line-height: 1.55">Graph-temporal memory with evidence: decisions, constraints and the why of every relation.</p>
+      </div>
+      <div style="padding: 28px; border-top: 6px solid #C9B08C; display: flex; flex-direction: column; gap: 10px">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #8A6A3A; letter-spacing: 0.1em">COORDINATE</div>
+        <div style="font-family: 'Fraunces', serif; font-size: 26px; font-weight: 700">MADE</div>
+        <p style="margin: 0; color: #5A4A3A; line-height: 1.55">Published workflows, claimed steps, guarded transitions and a receipt for every decision.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="workflows" style="background: #2A2018; color: #F4EDE1">
+    <div style="padding: 80px 48px; max-width: 1280px; margin: 0 auto; width: 100%; box-sizing: border-box; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 40px">
+      <div style="grid-column: span 5; display: flex; flex-direction: column; gap: 12px">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #C9B08C; letter-spacing: 0.1em">AGENT WORKFLOWS</div>
+        <h2 style="margin: 0; font-family: 'Fraunces', serif; font-size: 42px; font-weight: 700">Multi-step workflows you can install.</h2>
+        <p style="margin: 0; color: #C9B08C; line-height: 1.55; font-size: 17px">State machines with explicit steps, guards and bounded loops, run by the console and recorded by MADE. Built-in: debug, delivery, incident, plan, repair, improve. From the catalog: draft and critique, decision councils, red teams, peer review, STORM.</p>
+      </div>
+      <div style="grid-column: span 7; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+        <sc-for list="{{workflows}}" as="w" hint-placeholder-count="4">
+          <div style="padding: 20px; background: #342A20; border-radius: 14px; display: flex; flex-direction: column; gap: 6px">
+            <span style="font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 15px">{{w.name}}</span>
+            <span style="color: #E6DCCB; font-size: 14px; line-height: 1.5">{{w.summary}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section id="catalog" style="padding: 80px 48px; max-width: 1280px; margin: 0 auto; width: 100%; box-sizing: border-box; display: flex; flex-direction: column; gap: 32px">
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 16px">
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #B85C38; letter-spacing: 0.1em">CATALOG</div>
+        <h2 style="margin: 0; font-family: 'Fraunces', serif; font-size: 42px; font-weight: 700">Pre-forged tools a model would get wrong.</h2>
+        <p style="margin: 0; color: #5A4A3A; max-width: 640px; line-height: 1.5; font-size: 17px">Seats, working days, citations, VAT, statistics. Scanned, tested in a network-less sandbox, reviewed by a person and served in a signed index.</p>
+      </div>
+      <a href="#catalog" style="color: #B85C38; font-weight: 600; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center">All tools →</a>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px">
+      <sc-for list="{{tools}}" as="tool" hint-placeholder-count="3">
+        <a href="#catalog" style="display: flex; flex-direction: column; gap: 10px; padding: 24px; background: #FBF7F0; border-radius: 14px; text-decoration: none; color: #2A2018; min-height: 170px">
+          <span style="font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 17px">{{tool.name}} <span style="color: #8A6A3A; font-size: 13px">{{tool.version}}</span></span>
+          <span style="font-size: 13px; color: #B85C38">{{tool.category}}</span>
+          <span style="color: #5A4A3A; line-height: 1.5; font-size: 15px">{{tool.summary}}</span>
+        </a>
+      </sc-for>
+    </div>
+  </section>
+
+  <section id="publish" style="padding: 0 48px 96px; max-width: 1280px; margin: 0 auto; width: 100%; box-sizing: border-box">
+    <div style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 40px; align-items: center; padding: 48px; background: #FBF7F0; border-radius: 20px">
+      <div style="grid-column: span 6; display: flex; flex-direction: column; gap: 12px">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #B85C38; letter-spacing: 0.1em">PUBLISH</div>
+        <h2 style="margin: 0; font-family: 'Fraunces', serif; font-size: 34px; font-weight: 700">One key, one enrolment, one reviewer.</h2>
+        <p style="margin: 0; color: #5A4A3A; line-height: 1.55">The console creates your Ed25519 key, signs every request and publishes from the workspace. Nothing enters the catalog without a clean scan, sandbox tests and an operator's approval.</p>
+      </div>
+      <div style="grid-column: span 6; font-family: 'JetBrains Mono', monospace; font-size: 14px; background: #2A2018; color: #C9B08C; border-radius: 12px; padding: 22px 24px; white-space: pre-line; line-height: 1.8">/tools keygen
+/tools enroll acme acme_* --contact ops@acme.example
+/tools publish acme_count
+→ scanned · no findings · tests passed</div>
+    </div>
+  </section>
+
+  <footer style="border-top: 2px solid #2A2018; padding: 28px 48px; display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-between; font-size: 14px; color: #6B4A2E; margin-top: auto">
+    <span>© Underpass · Apache-2.0</span>
+    <span>registry.underpassai.com · github.com/underpass-ai</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2380}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      interfaces: [
+        { name: 'axlr-tui', text: 'The interactive console: work modes, approval cards, saved sessions, local or OpenRouter models, the setup assistant.', meta: 'Linux · macOS · Windows' },
+        { name: 'axlr-serve', text: 'HTTP, gRPC and MCP service with mTLS, principal roles, durable operations, event replay and exact approvals. Helm chart included.', meta: '18 capabilities · Kubernetes' },
+        { name: 'axlr worker', text: 'One JSON request in, one response out: read, write, edit, exec, plugins. You own the loop and the policy.', meta: 'cmd/axlr' },
+        { name: 'Go library', text: 'Typed executor, model client and MCP client to embed the runtime in your own host.', meta: 'github.com/underpass-ai/AXLR' }
+      ],
+      workflows: [
+        { name: 'draft_critique_revise', summary: 'Draft, critique against criteria and revise, three rounds at most.' },
+        { name: 'decision_memo_council', summary: 'An options memo, five votes and a dissent record.' },
+        { name: 'red_team_review', summary: 'Attack a plan before committing to it.' },
+        { name: 'literature_review_storm', summary: 'Perspectives, simulated interviews, outline and a cited article.' }
+      ],
+      tools: [
+        { name: 'seat_allocation', version: '1.0.0', category: 'politics and civics', summary: "Seats by D'Hondt, Sainte-Laguë or Hare, with a threshold; exact arithmetic and declared ties." },
+        { name: 'business_days', version: '1.0.0', category: 'administration', summary: 'Working days between dates, add or subtract working days, with given weekends and holidays.' },
+        { name: 'citation_format', version: 'soon', category: 'research', summary: 'BibTeX or CSL-JSON to APA, MLA, Chicago, IEEE and Vancouver.' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

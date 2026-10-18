@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AXLR · Home V4 Developer</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#FFFFFF}
+a{color:#B85C38}a:hover{color:#6B4A2E}
+</style>
+</helmet>
+<div style="font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #1B1411; background: #FFFFFF; min-height: 100%; display: flex; flex-direction: column">
+
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 24px; padding: 16px 40px; border-bottom: 1px solid #E6E0D6; background: #FFFFFF">
+    <a href="#top" aria-label="AXLR home" style="display: flex; align-items: center; text-decoration: none">
+      <img src="/_blob/5e1a1dcbd3385f60212c3c651daa7d1b" alt="AXLR" style="height: 24px; width: auto">
+    </a>
+    <nav aria-label="Main" style="display: flex; flex-wrap: wrap; gap: 24px; font-size: 14px; font-weight: 500">
+      <a href="#docs" style="text-decoration: none; color: #1B1411">Docs</a>
+      <a href="#interfaces" style="text-decoration: none; color: #1B1411">Runtime</a>
+      <a href="#workflows" style="text-decoration: none; color: #1B1411">Workflows</a>
+      <a href="#catalog" style="text-decoration: none; color: #1B1411">Catalog</a>
+      <a href="#registry" style="text-decoration: none; color: #1B1411">Registry</a>
+    </nav>
+    <div style="margin-left: auto; display: flex; gap: 12px; align-items: center">
+      <label for="search" style="position: absolute; left: -9999px">Search the docs</label>
+      <input id="search" type="search" placeholder="Search docs…  /" style="min-height: 38px; width: 240px; padding: 0 12px; border: 1px solid #E6E0D6; border-radius: 6px; font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; color: #1B1411; background: #FAF8F4">
+      <a href="https://github.com/underpass-ai/AXLR" style="display: inline-flex; align-items: center; min-height: 38px; padding: 0 14px; border: 1px solid #1B1411; border-radius: 6px; font-size: 14px; font-weight: 600; color: #1B1411; text-decoration: none">GitHub</a>
+    </div>
+  </header>
+
+  <section id="top" style="padding: 72px 40px 56px; max-width: 1200px; margin: 0 auto; width: 100%; box-sizing: border-box; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 40px; align-items: center">
+    <div style="grid-column: span 6; display: flex; flex-direction: column; gap: 22px">
+      <div style="display: inline-flex; align-items: center; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #6B4A2E"><span style="width: 8px; height: 8px; background: #B85C38; border-radius: 2px"></span>v0.9 · pre-1.0 · Apache-2.0</div>
+      <h1 style="margin: 0; font-weight: 700; font-size: 52px; line-height: 1.08; letter-spacing: -0.02em">Agentic execution runtime for local model turns, approved tools, sessions and MCP.</h1>
+      <p style="margin: 0; font-size: 18px; line-height: 1.55; color: #4A3A2E">AXLR owns the model loop, the tools, the approvals and the sessions. Pair it with KMP for evidence-backed memory and MADE for recorded workflows. Four interfaces, one set of use cases.</p>
+      <div style="display: flex; flex-wrap: wrap; gap: 12px">
+        <a href="#install" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; background: #1B1411; color: #FFFFFF; border-radius: 6px; font-weight: 600; font-size: 15px; text-decoration: none">Get started</a>
+        <a href="#docs" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 1px solid #E6E0D6; color: #1B1411; border-radius: 6px; font-weight: 600; font-size: 15px; text-decoration: none">Product contract</a>
+        <a href="#api" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 1px solid #E6E0D6; color: #1B1411; border-radius: 6px; font-weight: 600; font-size: 15px; text-decoration: none">Service API</a>
+      </div>
+    </div>
+    <div style="grid-column: span 6; border: 1px solid #E6E0D6; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 2px rgba(27,20,17,0.06)">
+      <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #FAF8F4; border-bottom: 1px solid #E6E0D6; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #6B4A2E"><span>axlr-tui</span><span style="color: #C9B08C">·</span><span>AXLR · working · ws:catalog</span></div>
+      <div style="padding: 16px 18px; background: #1B1411; color: #EDE6DA; font-family: 'IBM Plex Mono', monospace; font-size: 13px; line-height: 1.75; white-space: pre-line">› allocate 7 seats from votes.csv with D'Hondt, threshold 3 %
+
+◇ console: axlr_catalog found seat_allocation 1.0.0 (catalog axlr)
+▣ install card · catalog axlr · seat_allocation 1.0.0 · verified
+  $ python3 .axlr/tools/seat_allocation/seat_allocation.py
+  [y] install   [any key] no
+▶ axlr_run_tool seat_allocation {"seats": 7, "votes": …}
+  exit 0 · {"allocation": {"A": 3, "B": 3, "C": 1, "D": 0}}
+
+A 3 · B 3 · C 1 · D 0. D stays under the 3 % threshold.</div>
+    </div>
+  </section>
+
+  <section id="interfaces" style="padding: 24px 40px 64px; max-width: 1200px; margin: 0 auto; width: 100%; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px">
+    <h2 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.01em">Choose your interface</h2>
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+      <sc-for list="{{interfaces}}" as="i" hint-placeholder-count="4">
+        <a href="#docs" style="padding: 20px; border: 1px solid #E6E0D6; border-radius: 10px; display: flex; flex-direction: column; gap: 8px; text-decoration: none; color: #1B1411; background: #FFFFFF">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 15px">{{i.name}}</span>
+          <span style="color: #4A3A2E; font-size: 14px; line-height: 1.5">{{i.text}}</span>
+          <span style="font-size: 13px; color: #B85C38; font-weight: 600; margin-top: auto">{{i.link}} →</span>
+        </a>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="background: #FAF8F4; border-top: 1px solid #E6E0D6; border-bottom: 1px solid #E6E0D6">
+    <div style="padding: 64px 40px; max-width: 1200px; margin: 0 auto; width: 100%; box-sizing: border-box; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px">
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #B85C38; font-weight: 600">EXECUTE · AXLR</span>
+        <span style="font-size: 20px; font-weight: 700">Trusted workspace, approved effects</span>
+        <p style="margin: 0; color: #4A3A2E; line-height: 1.55; font-size: 15px">File tools stay inside the root; programs and MCP servers run with their host's authority; every write, edit, exec and plugin call carries a reason and a card.</p>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #D97B2D; font-weight: 600">REMEMBER · KMP</span>
+        <span style="font-size: 20px; font-weight: 700">Graph-temporal memory</span>
+        <p style="margin: 0; color: #4A3A2E; line-height: 1.55; font-size: 15px">Project scope recovered at the start of a task, decisions written with evidence, relations with their why, a viewer for the history.</p>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8A6A3A; font-weight: 600">COORDINATE · MADE</span>
+        <span style="font-size: 20px; font-weight: 700">Workflows with decision records</span>
+        <p style="margin: 0; color: #4A3A2E; line-height: 1.55; font-size: 15px">Published definitions, claimed steps, guarded transitions, bounded repetition and a receipt for every human decision.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="workflows" style="padding: 64px 40px; max-width: 1200px; margin: 0 auto; width: 100%; box-sizing: border-box; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 40px">
+    <div style="grid-column: span 5; display: flex; flex-direction: column; gap: 12px">
+      <h2 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.01em">Agent workflows</h2>
+      <p style="margin: 0; color: #4A3A2E; line-height: 1.55; font-size: 15px">Multi-step state machines the console drives and MADE records. Six are built in; more install from the catalog with one command. Each page shows the states, the guards, where a person decides and what the model judges for itself.</p>
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; background: #1B1411; color: #C9B08C; border-radius: 8px; padding: 14px 16px; white-space: pre-line; line-height: 1.8">/debug · /delivery · /incident · /plan · /repair · /improve
+/ceremony install draft_critique_revise</div>
+    </div>
+    <div style="grid-column: span 7; overflow-x: auto; border: 1px solid #E6E0D6; border-radius: 10px">
+      <table style="width: 100%; border-collapse: collapse; font-size: 14px">
+        <thead><tr style="background: #FAF8F4; text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #6B4A2E"><th style="padding: 10px 14px">workflow</th><th style="padding: 10px 14px">states</th><th style="padding: 10px 14px">pattern</th></tr></thead>
+        <tbody>
+          <sc-for list="{{workflows}}" as="w" hint-placeholder-count="6">
+            <tr style="border-top: 1px solid #E6E0D6">
+              <td style="padding: 10px 14px; font-family: 'IBM Plex Mono', monospace; font-weight: 500">{{w.name}}</td>
+              <td style="padding: 10px 14px; color: #4A3A2E">{{w.states}}</td>
+              <td style="padding: 10px 14px; color: #B85C38; font-family: 'IBM Plex Mono', monospace; font-size: 12px">{{w.pattern}}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="catalog" style="padding: 0 40px 64px; max-width: 1200px; margin: 0 auto; width: 100%; box-sizing: border-box; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 40px">
+    <div style="grid-column: span 7; display: flex; flex-direction: column; gap: 12px">
+      <h2 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.01em">Catalog and registry</h2>
+      <p style="margin: 0; color: #4A3A2E; line-height: 1.55; font-size: 15px">Pre-forged tools in the exact shape of a forged tool, served from a signed static index at registry.underpassai.com. Install from the console; publish with your own Ed25519 key after an operator approves your enrolment. Every entry: policy scan, sandbox tests, a named reviewer.</p>
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <sc-for list="{{tools}}" as="tool" hint-placeholder-count="2">
+          <a href="#catalog" style="display: grid; grid-template-columns: 200px minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 14px 16px; border: 1px solid #E6E0D6; border-radius: 8px; text-decoration: none; color: #1B1411">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px">{{tool.name}}</span>
+            <span style="color: #4A3A2E; font-size: 14px; line-height: 1.45">{{tool.summary}}</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #6B4A2E">{{tool.version}} · reviewed</span>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+    <div id="registry" style="grid-column: span 5; display: flex; flex-direction: column; gap: 10px; padding: 22px; background: #FAF8F4; border: 1px solid #E6E0D6; border-radius: 10px">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #B85C38; font-weight: 600">PUBLISH IN FOUR LINES</span>
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #1B1411; white-space: pre-line; line-height: 1.9">/tools keygen
+/tools enroll acme acme_* --contact ops@acme.example
+/tools publish acme_count
+→ scanned · no findings · tests passed</div>
+      <p style="margin: 0; color: #4A3A2E; font-size: 13px; line-height: 1.5">Signed requests, per-key rate limits, no tokens. The operator approves the publisher once; every version is reviewed on its own.</p>
+    </div>
+  </section>
+
+  <footer style="border-top: 1px solid #E6E0D6; padding: 24px 40px; display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-between; font-size: 13px; color: #6B4A2E; margin-top: auto">
+    <span>© Underpass · Apache-2.0 · Part of underpassai.com</span>
+    <span>registry.underpassai.com · github.com/underpass-ai/AXLR</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2380}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      interfaces: [
+        { name: 'axlr-tui', text: 'Interactive console with work modes, approval cards, saved sessions, local or OpenRouter models.', link: 'Console guide' },
+        { name: 'axlr-serve', text: 'HTTP, gRPC and MCP with mTLS, principal roles, durable operations, event replay. Helm chart.', link: 'Service API' },
+        { name: 'axlr (worker)', text: 'One JSON request on stdin, one response on stdout: read, write, edit, exec, plugins.', link: 'Worker contract' },
+        { name: 'Go library', text: 'Typed executor, OpenRouter client and MCP client for your own host.', link: 'Library' }
+      ],
+      workflows: [
+        { name: 'axlr_debug', states: 'reproduce → diagnose → repair → integrate', pattern: 'built in · check command' },
+        { name: 'axlr_delivery', states: 'brief → build → integrate', pattern: 'built in · check command' },
+        { name: 'axlr_incident', states: 'triage → timeline → analysis → review → approval → publish', pattern: 'built in · human gate' },
+        { name: 'axlr_plan', states: 'decompose → approval → tasks → sync waves', pattern: 'built in · fresh workers' },
+        { name: 'draft_critique_revise', states: 'draft → critique → revise ⟲ → deliver / escalate', pattern: 'catalog · maker_checker' },
+        { name: 'decision_memo_council', states: 'frame → options → votes → dissent → decision', pattern: 'catalog · council' }
+      ],
+      tools: [
+        { name: 'seat_allocation', version: '1.0.0', summary: "Seats by D'Hondt, Sainte-Laguë or Hare, with a threshold; exact arithmetic and declared ties." },
+        { name: 'business_days', version: '1.0.0', summary: 'Working days between dates, add or subtract working days, with given weekends and holidays.' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+public/
+content/docs/
+content/catalog/*.md
+!content/catalog/_index.md
