@@ -1,46 +1,50 @@
 +++
 title = "Agent workflows"
-description = "Multi-step state machines the AXLR console drives and MADE records: six built-in commands, any published definition through /ceremony, and a catalog of 37 workflows in three tiers."
+description = "Multi-step state machines the AXLR console drives and MADE arbitrates and records: six built-in commands, any published definition through /ceremony, and a proposed catalog of 37 workflows in three tiers, one of them written."
 template = "page.html"
 [extra]
 eyebrow = "Workflows"
-lead = "Multi-step state machines the console drives and MADE records. Each one has states, guarded transitions, capped loops, the points where a person decides and the judgements the model makes for itself."
+lead = "Multi-step state machines the console drives and MADE arbitrates and records. Each one has states, guarded transitions, capped loops, the points where a person decides and the judgements the model makes for itself."
 mermaid = true
 +++
 
-<div class="note"><p>MADE calls a workflow definition a <em>ceremony</em>; the word survives in commands such as <code>/ceremony</code>.</p></div>
+<div class="note vocab-note"><p>MADE calls a workflow a <em>ceremony</em>: the versioned definition is a ceremony definition and each run a ceremony instance. The word survives in commands such as <code>/ceremony</code>.</p></div>
 
-AXLR runs ordinary work directly. A workflow starts only when you ask for one: a work-mode command, `/ceremony` with a definition, or a self-repair the agent requests with evidence the console validates. The console drives the instance and the model does each step's work with AXLR tools; the model never drives a console workflow through direct `made_*` calls. MADE records every completed step, so the result is a recorded instance with receipts backed by real work, not a state that changed by itself.
+AXLR runs ordinary work directly. A workflow starts only when you ask for one: a work-mode command, `/ceremony` with a definition, or a self-repair or self-improvement the agent requests with evidence the console validates. The console drives the instance and the model does each step's work with AXLR tools; the model never drives a console workflow through direct `made_*` calls. MADE records every accepted step completion and transition in a hash-chained journal, so the result is an instance whose history can be checked, not a state that changed by itself. MADE does not verify the work: that a step did real work is the console's evidence (command exits, revisions, files), which MADE records.
+
+## MADE
+
+MADE is Underpass's open-source coordination engine (Apache-2.0, [github.com/underpass-ai/made](https://github.com/underpass-ai/made), pre-1.0). It runs no agents and, in its local form, calls no model: the console does each step's work, while MADE decides which step may be claimed next and enables a transition only when its guards hold. Its journal verifies its own integrity and order, not the truth of the work, and a person's approval at a human guard is a separate recorded fact that an agent's claim cannot replace. AXLR uses MADE locally, as one MCP process (`made-mcp`) over one SQLite file; MADE also runs as a gRPC service.
 
 ## Built in
 
-Six commands start the console's pinned definitions. Selecting a mode does not start an instance; the next prompt does. AXLR checks the published definition's digest, starts the instance and claims its first step.
+Six commands start the console's pinned definitions. Selecting `/debug`, `/delivery` or `/incident` does not start an instance; the next prompt does. `/plan` opens the plans panel, and `/repair` and `/improve` run only in a clone that `axlr-tui --repair` or `--improve` prepared. AXLR checks the published definition's semantic digest, starts the instance and claims its first step.
 
 | Command | Definition | Sequence and acceptance |
 |:--|:--|:--|
 | `/debug` | `axlr_debug` 2.0 | Reproduce with a nonzero command exit → diagnose → repair until the same command exits zero → integrate |
 | `/delivery` | `axlr_delivery` 2.0 | Brief with criteria, scope and baseline command → build until that command exits zero → integrate |
 | `/incident` | `axlr_incident` 1.0 | Triage → evidence timeline → analysis and actions → draft and fresh-context review → the person's approval → postmortem publication |
-| `/plan` | `axlr_plan`, `axlr_task`, `axlr_sync` 1.0 | Decompose a brief into verified atomic tasks → the person's approval → each task in a fresh worker (red, green, hand-back) → a sync after each wave |
-| `/repair` | `axlr_repair` 1.0 | Reproduce → diagnose → repair in a fresh clone → the console commits, pushes and opens the pull request → watches its checks → merge decision → squash merge |
+| `/plan` | `axlr_plan`, `axlr_task`, `axlr_sync` 1.0 | Decompose a brief into verified atomic tasks → the person's approval → each task in a fresh worker (red for test-first tasks, green, hand-back) → a sync after each wave |
+| `/repair` | `axlr_repair` 1.0 | Reproduce → diagnose → repair in a fresh clone → the console commits, pushes and opens the pull request → watches its checks → merge decision (automatic with `repair.auto_merge`, otherwise yours) → squash merge |
 | `/improve` | `axlr_improve` 1.0 | Brief with a check that fails in a fresh clone → build until it passes → the console opens the pull request → watches its checks → the person's merge decision → squash merge |
 
 - **Check commands.** A proposed check is `{program, args}` with no implicit shell. The first command, or a changed reproduction command, needs your approval even in full autonomy; once accepted, repair and build always rerun the saved command. Each run has a five-minute timeout.
 - **Bounded loops.** Debug reproduction and repair, and delivery build, allow at most three iterations per phase. Exhaustion leads to `BLOCKED`; successful integration to `COMPLETED`. Both return the session to normal mode.
-- **What integration proves.** Integration records the report, `git rev-parse HEAD` and the dirty files; it does not commit, merge or publish. A zero exit proves only what that command checks.
-- **Self-repair and self-improvement.** `axlr-tui --repair "<brief>"` and `axlr-tui --improve "<brief or #issue>"` let the console change its own repository through a pull request; an improvement always leaves the merge to you.
+- **What integration proves.** In `/debug` and `/delivery`, integration records the report, `git rev-parse HEAD` and the dirty files; it does not commit, merge or publish. A zero exit proves only what that command checks.
+- **Self-repair and self-improvement.** `axlr-tui --repair "<brief>"` and `axlr-tui --improve "<brief or #issue>"` let the console change the configured repository (`repair.repository`, AXLR's own by default) through a pull request it opens with `gh`; an improvement always leaves the merge to you.
 
 The [console's workflow guide](@/docs/ceremonies.md) has the full behaviour, and the [MADE runbook](@/docs/runbooks--made.md) prepares the identity and publishes the pinned definitions.
 
 ## Any published definition
 
-`/ceremony` lists the published definitions; `/ceremony <definition> [version] [brief]` runs one through the generic loop. The console claims each step MADE lists as claimable, hands the model the step's own prompt from the definition, completes the step with exactly the fields the model hands back through `axlr_step_done`, applies the transition MADE enables and claims the next step. At a terminal state it records the outcome and returns the session to normal mode.
+`/ceremony` lists the published definitions; `/ceremony <definition> [version] [brief]` runs one through the generic loop. The console claims each step MADE lists as claimable, hands the model the step's own prompt from the definition, completes the step with exactly the fields the model hands back through `axlr_step_done`, applies the transition MADE enables and claims the next step. At a terminal state it writes the outcome to KMP and returns the session to normal mode. A state with no enabled transition and no claimable step, such as a MADE human guard, waits for something outside the console.
 
-`/ceremony publish <file.yaml>` validates and publishes a definition you wrote. The model can design definitions; it never publishes one.
+`/ceremony publish <file.yaml>` validates and publishes a definition you wrote; a relative path is read from the workspace. A published name and version is immutable: change the version when the content changes, and running instances stay on the version they started with. The model can design definitions; it never publishes one.
 
 ```text
 /ceremony publish draft_critique_revise-1.0.yaml
-/ceremony draft_critique_revise "a 300-word release note; criteria: accurate, plain, names every breaking change"
+/ceremony draft_critique_revise a 300-word release note; criteria: accurate, plain, names every breaking change
 ```
 
 ## The catalog
@@ -49,7 +53,7 @@ The catalog packages orchestration patterns that recur across agent frameworks a
 
 ### The reference definition: `draft_critique_revise` 1.0
 
-Write a draft from a brief, critique it against the brief's named criteria, revise; at most three critique rounds and two revision attempts per round. Deliver when the critique accepts it, escalate to the person when the rounds run out. It validates as publishable with MADE 0.10.0, and its four paths (accepted at once; rejected, revised, accepted; a revision that cannot settle; three rejections) were walked through a real `made-mcp` in a disposable store. [Read the definition](https://github.com/underpass-ai/AXLR/blob/main/catalog/ceremonies/writing/draft_critique_revise-1.0.yaml).
+Write a draft from a brief, critique it against the brief's named criteria, revise; at most three critique rounds (counted by the critic and bounded by MADE's `max_bounces`) and two revision attempts per round (MADE's step `repeat`). Deliver when the critique accepts it, escalate to the person when the rounds run out. It validates as publishable with MADE 0.10.0, with one accepted warning (its loop has no human-controlled state), and its four paths (accepted at once; rejected, revised, accepted; a revision that cannot settle; three rejections) were walked through a real `made-mcp` in a disposable store. [Read the definition](https://github.com/underpass-ai/AXLR/blob/main/catalog/ceremonies/writing/draft_critique_revise-1.0.yaml).
 
 <pre class="mermaid">
 stateDiagram-v2
@@ -71,16 +75,18 @@ stateDiagram-v2
 
 | Mechanism | Today | Rule for a catalog definition |
 |:--|:--|:--|
-| Step status and scalar output fields as guards | yes | every judgement is derived into a scalar (`accepted=true`, `decision="approve"`); a numeric threshold is computed by the step and handed back as a boolean |
-| Loops with `repeat.max_iterations`, `max_transitions`, `max_bounces` | yes | every loop has a cap and an exit to a terminal or escalation state |
-| A person's decision | approximated | a step whose prompt puts the question to the person in the conversation and hands back `decision`; the console cannot give a `manual_approval` |
-| Independent voices (councils, debaters, blind screeners) | approximated | sequential steps with `see_prior: false`, one per voice; every voice is the session's model in a fresh context |
+| Automated guards on step status (`step_status:<step>:COMPLETED`) and on a top-level output field (`output_field:<step>:<field>=<json>`, exact equality) | yes | every judgement is derived into a scalar (`accepted=true`, `decision="approve"`); a numeric threshold is computed by the step and handed back as a boolean |
+| Loops: `repeat.max_iterations` on a step or state, `max_transitions` for the whole instance, `max_bounces` per edge | yes | every loop has a cap and a `step_repeat_exhausted` or `state_repeat_exhausted` exit to a terminal or escalation state |
+| A person's decision | approximated | a step whose prompt puts the question to the person in the conversation and hands back `decision`, which is the model's output, not a recorded human approval. The generic loop cannot approve a MADE human guard (`type: human`, `check: manual_approval`); the built-in workflows approve theirs through a separate approver identity |
+| Independent voices (councils, debaters, blind screeners) | approximated | sequential steps, one per voice, whose prompt tells the model not to rely on earlier voices (marked `see_prior: false`). MADE reads that flag only in its own council handler and the generic loop runs every voice in the same session, so independence rests on the prompt alone |
 | Check commands | only in the pinned built-in workflows | the step runs the command through `local_exec` and reports `passed` |
-| Budget | per session | `max_session_usd` and the session's token cap bound the work, with `max_transitions` |
+| Budget | per session | `max_session_usd`, the per-request context cap (`prompt_tokens`, 75,000 by default) and `max_transitions` bound the work |
 
 ### Tiers
 
-**A** runs in the generic loop today. **B** runs today with the person's decision and parallel voices approximated as above; its page will say so. **C** waits for console guards (approval card, check command, fan-out) before it is worth publishing. Rounds are always capped; the cap is in the definition.
+**A** runs in the generic loop today. **B** runs today with the person's decision and parallel voices approximated as above; its page will say so. **C** waits for console features (an approval card in the generic loop, check commands, fan-out) before it is worth publishing. Rounds are always capped; the cap is in the definition.
+
+In the tables below, a "council" is one model given several prompts, not a MADE council of registered agents, and "blind" means a prompt that excludes earlier voices. The snake_case pattern names are MADE's own (`maker_checker`, `broadcast_collect`, `group_chat`, `handoff`, `magentic`, `advisor`) or its `roundtable_fixed_order` preset; catalog definitions approximate them with ordinary sequential states and steps. MADE's `advisor` kind needs MADE 0.10.0.
 
 ### Writing and editing
 

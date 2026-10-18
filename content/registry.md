@@ -4,7 +4,7 @@ description = "How registry.underpassai.com serves AXLR's signed tool catalog: a
 template = "page.html"
 [extra]
 eyebrow = "Registry"
-lead = "The registry is the catalog's write side: a serverless Rust service that takes signed uploads, scans and tests them, and publishes a static index the operator signs offline. Everything the console reads is static."
+lead = "The registry is the catalog's write side: a serverless Rust service that takes signed uploads, scans and tests them, and publishes a static index the operator signs offline. Everything the console installs from is static."
 mermaid = true
 +++
 
@@ -41,7 +41,7 @@ flowchart LR
 - **The publisher's.** Each publisher holds one Ed25519 key, enrolled once and approved by an operator. It signs the bundle digest of every version and every request. A revoked key never verifies again, and the next index carries the revocation.
 - **The registry's.** The index is signed in minisign format with a key that never lives in AWS: the registry writes the unsigned index, the operator signs it on their own machine and uploads the `.minisig`. The console ships with the public key and refuses an index whose signature does not verify, so an unsigned publish is harmless.
 
-The index then carries the SHA-256 of each tool's manifest and files. The console verifies the signature, then the manifest and every file against the index, before it shows an install card and again before it writes. One tampered file, manifest or index is caught.
+The index then carries the SHA-256 of each tool's manifest and files. The console verifies the signature, then the manifest and every file against the index, before it shows an install card and again before it writes. One tampered file, manifest or index is caught. The console does not yet read revocations or check the publisher's own signature: today the guarantees it enforces stop at the index signature and the digests.
 
 ## Who calls what
 

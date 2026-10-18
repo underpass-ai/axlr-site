@@ -6,7 +6,7 @@
     <div class="crumbs"><a href="//">AXLR</a> / <a href="/catalog/">Catalog</a> / {{ x.category }}</div>
     <h1 class="mono">{{ page.title }}</h1>
     <p class="lead">{{ x.description | default(value=page.description) }}</p>
-    {% if x.revoked %}<p class="note warn"><strong>Revoked.</strong> The index revokes this version; the console refuses to install it.</p>{% endif %}
+    {% if x.revoked %}<p class="note warn"><strong>Revoked.</strong> The registry withdrew this version, so the index no longer offers it for install. The console does not yet read revocations: a copy already installed keeps running until you remove it with <code>/tools remove {{ page.title }}</code>.</p>{% endif %}
   </header>
   <div class="tool-layout">
     <div class="doc-main">
@@ -14,7 +14,7 @@
         <h2 id="install">Install</h2>
 <pre class="cmd">/tools install {{ page.title }}
 /tools install {{ page.title }}@{{ x.version }}</pre>
-        <p>In a console session, or let the model find it: <code>axlr_catalog</code> describes it and <code>axlr_install_tool</code> asks for the same install card. The card reads <code>catalog axlr · {{ page.title }} {{ x.version }} · verified</code> once the index signature, the manifest digest and every file digest check out. Then the model runs it with <code>axlr_run_tool {{ page.title }}</code>; each run is approved as a <code>local_exec</code>.</p>
+        <p>In a console session, or let the model find it in normal mode: <code>axlr_catalog</code> describes it and <code>axlr_install_tool</code> asks for the same install card. The card reads <code>catalog axlr · {{ page.title }} {{ x.version }} · verified</code> once the index signature, the manifest digest and every file digest check out. Then the model runs it with <code>axlr_run_tool {{ page.title }}</code>; each run is approved as a <code>local_exec</code>.</p>
 
         {% if page.content %}<h2 id="about">About</h2>
         {{ page.content | safe }}{% endif %}

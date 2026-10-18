@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parent.parent
 PUBLIC = ROOT / "public"
 BASE = "https://axlr.underpassai.com"
 WORD = re.compile(r"(?<![/\w-])ceremon(y|ies)\b", re.I)
-SKIP_TEXT = {"code", "pre", "script", "style", "kbd", "samp"}
+SKIP_TEXT = {"code", "pre", "script", "style", "kbd", "samp"}  # and the .vocab-note on /workflows/
 
 
 class Page(HTMLParser):
@@ -29,6 +29,7 @@ class Page(HTMLParser):
         self.links: list[str] = []
         self.text: list[str] = []
         self.depth = 0
+        self.skipping: list[str] = []
 
     def handle_starttag(self, tag, attrs):
         a = dict(attrs)
@@ -39,11 +40,13 @@ class Page(HTMLParser):
         for key in ("href", "src"):
             if a.get(key) and tag in ("a", "img", "link", "script"):
                 self.links.append(a[key])
-        if tag in SKIP_TEXT:
+        if tag in SKIP_TEXT or "vocab-note" in (a.get("class") or ""):
             self.depth += 1
+            self.skipping.append(tag)
 
     def handle_endtag(self, tag):
-        if tag in SKIP_TEXT and self.depth:
+        if self.skipping and tag == self.skipping[-1]:
+            self.skipping.pop()
             self.depth -= 1
 
     def handle_data(self, data):
@@ -97,8 +100,6 @@ def main() -> int:
         text = " ".join(p.text)
         for m in WORD.finditer(text):
             ctx = text[max(0, m.start() - 60): m.end() + 60].replace("\n", " ")
-            if "calls a workflow definition a" in ctx:
-                continue  # the one sanctioned note on /workflows/
             errors.append(f"{rel}: wording 'ceremon…' outside code: …{ctx}…")
     for w in warnings:
         print(f"warning: {w}")

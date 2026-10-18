@@ -20,7 +20,7 @@ The console is one registry client; the `axlr-registry` command line is the othe
 
 ### 1. Create your key
 
-`/tools keygen` creates the console's client key in its private state (`<state>/axlr/registry/client.key`, mode 0600, the same format the CLI's `publisher keygen` writes, so one file serves both) and shows the public key and the key id: the first 16 hex characters of the SHA-256 of the public key. `/tools identity` shows them again. The key never enters a workspace and the registry never sees the private half. A second `keygen` is refused; to rotate, move the file away and enrol the new key.
+`/tools keygen` creates the console's client key in its private state (`<state>/axlr/registry/client.key`, mode 0600, the same format the CLI's `publisher keygen` writes, so one file serves both) and shows the public key and the key id: the first 16 hex characters of the SHA-256 of the public key. `/tools identity` shows them again. The key never enters a workspace and the registry never sees the private half. A second `keygen` is refused; to rotate, move the file away and enrol the new key. `enroll` and `publish` create the key if you skip this step.
 
 ### 2. Enrol as a publisher
 
@@ -28,7 +28,7 @@ The console is one registry client; the `axlr-registry` command line is the othe
 /tools enroll <publisher id> <namespace>… --contact <address> [--to <catalog>]
 ```
 
-The request is signed with the key being enrolled, which proves you hold it. It carries the id (2 to 32 lowercase letters, digits, `_` or `-`), the public key, the namespaces your tools will use (`acme_*`) and a contact the operator can reach (an email address or a `scheme:handle`). The answer is `pending: an operator of <catalog> must approve it`. Until an operator approves, every other request of this key is refused with `403 pending`. The operator checks the contact and the namespaces and may narrow the namespaces, never widen them.
+The request is signed with the key being enrolled, which proves you hold it. It carries the id (2 to 32 lowercase letters, digits, `_` or `-`), the public key, the namespaces your tools will use (`acme_*`) and a contact the operator can reach (an email address or a `scheme:handle`). The answer is `pending: an operator of <catalog> must approve it`. Until an operator approves, every other request of this key is refused with `403 pending`. The operator checks the contact and the namespaces; when approving, the operator may narrow the namespaces, never widen them.
 
 ### 3. Prepare the tool
 
@@ -36,6 +36,8 @@ Forge the tool in the workspace with the model (`axlr_forge_tool`), or write it 
 
 - `.axlr/tools/<name>/tests.json`: the registry's test cases, a list of `{name, input, expect}` with `expect.exit`, `expect.stdout_json` or `expect.stdout_contains`. Without it a version is accepted but can never be approved.
 - `.axlr/tools/<name>/catalog.json`: the manifest's `catalog` block: `version`, `category`, `tags`, `license`, `requires`, `network`, `example`, `source`. The console asks for the missing required fields (version, category, licence) one at a time and saves the answers.
+
+A published tool's files sit directly in its directory (no subdirectories), and publishing needs `forged_tools` on and a catalog with an `api_url`.
 
 ### 4. Publish
 
@@ -62,6 +64,6 @@ The `201` shows the version's status (`scanned`, or `rejected` with the blocking
 
 **The tests.** Your `tests.json` runs in a sandbox with no network path, `PATH` and `HOME` only, a timeout and an output cap. A test that tries the network fails, which is the expected result for a `network: false` tool.
 
-**The reviewer.** A person with the reviewer role, who is never the version's publisher, approves a version that is scanned, clean and whose tests passed. "Reviewed" is a verdict with a reviewer and a time, not a proof: no scanner shows that a Python or bash file is harmless. The registry does what is deterministic and the install card says exactly that.
+**The reviewer.** A person with the reviewer role, who is never the version's publisher, approves a version that is scanned, clean and whose tests passed. "Reviewed" is a verdict with a reviewer and a time, not a proof: no scanner shows that a Python or bash file is harmless. The registry does what is deterministic. The install card shows the origin, the licence, any warning and every file, but not yet the publisher or the reviewer.
 
 After an approval the registry writes the unsigned canonical index; the operator signs it offline with the registry key, which never lives in AWS, and the console refuses an index without a valid signature. The [registry](@/registry.md) page has the architecture, and the [console guide](@/docs/console.md#publishing-a-tool-to-a-catalog) the full command reference.

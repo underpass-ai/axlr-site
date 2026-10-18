@@ -63,6 +63,7 @@ main { flex: 1 0 auto; }
 h1, h2, h3, h4 { color: $ink; }
 .h2 { margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; }
 .text { margin: 0; color: $body; line-height: 1.55; font-size: 15px; }
+.text code, .lead code { font-size: 0.88em; background: $white; border: 1px solid $hairline; border-radius: 4px; padding: 0 4px; color: $ink; }
 
 // ---------- home ----------
 .hero { padding-top: 72px; padding-bottom: 56px; align-items: center; }
