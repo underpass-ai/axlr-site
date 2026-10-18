@@ -1,0 +1,73 @@
+name: build and deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: '17 5 * * *'   # daily: pick up new AXLR docs and catalog entries
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  AWS_REGION: us-east-1
+  AWS_ROLE_ARN: arn:aws:iam::203918869295:role/axlr-registry-github-deploy
+  STACK_NAME: axlr-site
+
+jobs:
+  site:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: zola@0.23.6
+
+      - name: Sync docs and catalog
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 scripts/sync.py
+
+      - name: Build
+        run: zola build
+
+      - name: Check links and wording
+        run: python3 scripts/check.py
+
+      - name: AWS credentials
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy the stack
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: |
+          aws cloudformation deploy \
+            --stack-name "$STACK_NAME" \
+            --template-file infra/template.yaml \
+            --no-fail-on-empty-changeset \
+            --tags project=axlr-site
+
+      - name: Upload the site and invalidate
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: |
+          out() { aws cloudformation describe-stacks --stack-name "$STACK_NAME" \
+            --query "Stacks[0].Outputs[?OutputKey=='$1'].OutputValue" --output text; }
+          bucket=$(out BucketName)
+          distribution=$(out DistributionId)
+          aws s3 sync public/ "s3://$bucket/" --delete --only-show-errors \
+            --cache-control 'public, max-age=300, s-maxage=86400'
+          aws cloudfront create-invalidation --distribution-id "$distribution" --paths '/*' \
+            --query 'Invalidation.Id' --output text
+          echo "Deployed to $(out Url)" >> "$GITHUB_STEP_SUMMARY"
