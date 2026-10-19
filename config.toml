@@ -1,6 +1,6 @@
 base_url = "https://axlr.underpassai.com"
 title = "AXLR"
-description = "AXLR is Underpass's agentic execution runtime: the model loop, tools, approvals and sessions, with a console, an mTLS service, a JSON worker and a Go library."
+description = "AXLR is an open-source agent runtime in Go. Agents forge the tools they lack, you approve them, and AXLR keeps them, checked by digest, for later sessions. A console, an mTLS HTTP/gRPC/MCP service, a JSON worker and a Go library, with KMP for memory and MADE for agent workflows."
 default_language = "en"
 compile_sass = true
 minify_html = false
