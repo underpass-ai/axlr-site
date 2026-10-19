@@ -7,26 +7,29 @@
 <section id="top" class="wrap grid12 hero">
   <div class="span6 hero-copy">
     <div class="badge">{% if site and site.axlr_version %}{{ site.axlr_version }}{% else %}latest release{% endif %} · pre-1.0 · Apache-2.0</div>
-    <h1>Agentic execution runtime for local model turns, approved tools, sessions and MCP.</h1>
-    <p class="lead">AXLR owns the model loop, the tools, the approvals and the sessions. Pair it with KMP for local memory that answers from stored evidence, and MADE for workflows with a verifiable record. Four interfaces over one runtime.</p>
+    <h1>Your agent needs a tool. AXLR forges it.</h1>
+    <p class="lead">When no tool does what the task needs, the model writes one. You approve it, AXLR records the SHA-256 of every file, and the tool is still there in the next session. Change a file and it refuses to run until it is forged again. One open-source runtime in Go: a console, an mTLS service, a JSON worker and a library.</p>
     <div class="actions">
       <a class="btn btn-dark" href="/install/">Get started</a>
-      <a class="btn" href="/docs/product/">Product contract</a>
-      <a class="btn" href="/docs/api/">Service API</a>
+      <a class="btn" href="/docs/console/#forged-tools">How forging works</a>
+      <a class="btn" href="{{ config.extra.github }}">GitHub</a>
     </div>
   </div>
-  <div class="span6 terminal" aria-label="A console session that installs and runs a catalog tool">
-    <div class="terminal-bar"><span>axlr-tui</span><span class="dot">·</span><span>AXLR · working · seat allocation</span></div>
-<pre class="terminal-body"><span class="t-prompt">› allocate 7 seats from votes.csv with D'Hondt, threshold 3 %</span>
+  <div class="span6 terminal" aria-label="A console session in which the model forges a tool, the user approves it, and the tool runs">
+    <div class="terminal-bar"><span>axlr-tui</span><span class="dot">·</span><span>AXLR · working · incident timeline</span></div>
+<pre class="terminal-body"><span class="t-prompt">› rebuild the timeline of request 8812 from api.log and worker.log</span>
 
-◇ console: axlr_catalog found seat_allocation 1.0.0 (catalog axlr)
-<span class="t-card">▣ install card · catalog axlr · seat_allocation 1.0.0 · verified
-  $ python3 .axlr/tools/seat_allocation/seat_allocation.py
-  [y] install   [any key] no</span>
-▶ axlr_run_tool seat_allocation {"seats": 7, "votes": …}
-  <span class="t-ok">exit 0</span> · {"allocation": {"A": 3, "B": 3, "C": 1, "D": 0}}
+◇ axlr_tools: no tool joins two logs by correlation_id
+<span class="t-card">▣ Confirm tool · forge tool log_timeline: writes its files
+  under .axlr/tools/log_timeline · log_timeline.py, 1 file
+  [a] approve   [d] deny</span>
+▶ axlr_forge_tool log_timeline · sha256 recorded
+<span class="t-card">▣ Confirm tool · run forged tool log_timeline (as a local exec)
+  [a] approve   [d] deny</span>
+▶ axlr_run_tool log_timeline {"id": "8812", "logs": ["api.log", "worker.log"]}
+  <span class="t-ok">exit 0</span> · 6 events, api → queue → worker → api
 
-A 3 · B 3 · C 1 · D 0. D clears the 3 % threshold, but D'Hondt leaves it without a seat.</pre>
+Next session, axlr_tools finds log_timeline already forged.</pre>
   </div>
 </section>
 

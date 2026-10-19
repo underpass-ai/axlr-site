@@ -12,6 +12,14 @@
 <meta property="og:description" content="{{ d }}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="AXLR">
+<meta property="og:image" content="{{ get_url(path='og/axlr-og.png') }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="AXLR: your agent needs a tool, AXLR forges it">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ t }}">
+<meta name="twitter:description" content="{{ d }}">
+<meta name="twitter:image" content="{{ get_url(path='og/axlr-og.png') }}">
 {%- if current_url %}<link rel="canonical" href="{{ current_url }}"><meta property="og:url" content="{{ current_url }}">{% endif %}
 {%- endblock meta %}
 <meta name="theme-color" content="#FFFFFF">
