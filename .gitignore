@@ -4,4 +4,6 @@ content/catalog/*.md
 !content/catalog/_index.md
 data/
 static/docs-assets/
+static/docs/
+static/llms.txt
 .claude/

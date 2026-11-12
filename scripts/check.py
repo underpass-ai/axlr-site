@@ -101,6 +101,15 @@ def main() -> int:
         for m in WORD.finditer(text):
             ctx = text[max(0, m.start() - 60): m.end() + 60].replace("\n", " ")
             errors.append(f"{rel}: wording 'ceremon…' outside code: …{ctx}…")
+    # The files agents and scanners fetch by a fixed path.
+    for path in (".well-known/security.txt", "llms.txt", "docs/index.md", "docs/security.md"):
+        if not (PUBLIC / path).is_file():
+            errors.append(f"/{path}: missing from the build")
+    llms = PUBLIC / "llms.txt"
+    if llms.is_file():
+        for link in re.findall(r"\]\((https://axlr\.underpassai\.com/[^)]+)\)", llms.read_text(encoding="utf-8")):
+            if target_file(link[len(BASE):]) is None:
+                errors.append(f"/llms.txt: broken link {link}")
     for w in warnings:
         print(f"warning: {w}")
     for e in errors:
