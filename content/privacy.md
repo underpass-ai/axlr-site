@@ -37,7 +37,7 @@ AWS processes each request (your IP address, the page, your browser's headers) t
 | A sample of requests (IP address, path, headers) | Diagnosing blocked traffic in AWS WAF | Up to 3 hours, by AWS |
 | Aggregate request metrics | Operating the service | Counts only, no IP addresses |
 
-There are no access logs of the catalog.
+There are no access logs of the catalog. `/`, `/robots.txt` and `/.well-known/security.txt` answer any client; everything else answers only AXLR clients.
 
 **Publishing a tool** (only if you enrol as a publisher):
 
@@ -50,7 +50,7 @@ There are no access logs of the catalog.
 | The audit log: time, actor, action, subject, reason | Accountability for every change to the catalog | Indefinitely, append-only |
 | Function logs and traces | Operating the service: start, end, duration and errors, without request bodies | Logs until deleted; traces 30 days |
 
-Everything runs in AWS (`eu-west-1` for the API and data, CloudFront worldwide). We do not sell or share any of it.
+Everything runs in AWS (`eu-south-2`, Spain, for the API and data; CloudFront worldwide). We do not sell or share any of it.
 
 ## Engine downloads
 
