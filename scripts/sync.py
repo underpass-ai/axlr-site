@@ -8,6 +8,8 @@ Writes, all ignored by git and rebuilt on every deploy:
   data/site.json           release, commit and index facts for the templates
   data/docs_nav.json       the docs sidebar, in the order of docs/index.md
   static/docs-assets/      images the synced docs embed
+  static/docs/**.md        each synced doc's Markdown as written, at its repository path
+  static/llms.txt          the index of those Markdown files for agents (llmstxt.org)
 
 The AXLR source is a local checkout (--axlr-dir, read with `git archive` at
 --axlr-ref, so the working tree is never touched) or the GitHub tarball of the
@@ -465,8 +467,10 @@ def write_docs(docs: Docs, out: Path, data: Path, static: Path) -> int:
     nav = docs.nav()
     order = [p for g in nav for p in g["links"]]
     titles: dict[str, str] = {}
+    descs: dict[str, str] = {}
     for f in docs.files:
         title, body, mermaid, desc = docs.convert(f)
+        descs[f] = desc
         title = docs.words(title) or f
         if f == "docs/ceremonies.md" and not docs.keep:
             title = "Agent workflows in the console"  # "Workflows" alone repeats the top-level page
@@ -498,7 +502,55 @@ def write_docs(docs: Docs, out: Path, data: Path, static: Path) -> int:
         dst = static / a.removeprefix("docs/assets/")
         dst.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(docs.src / a, dst)
+    write_agent_files(docs, titles, descs, order, static.parent)
     return len(docs.files)
+
+
+SITE = "https://axlr.underpassai.com"
+
+
+def write_agent_files(docs: Docs, titles: dict[str, str], descs: dict[str, str], order: list[str], static_root: Path) -> None:
+    """Serve each synced doc's Markdown as written, at its repository path
+    under /docs/ (so its relative links resolve to the other Markdown files),
+    and list them in /llms.txt for agents that read Markdown, not HTML."""
+    markdown = static_root / "docs"
+    shutil.rmtree(markdown, ignore_errors=True)
+    for f in docs.files:
+        dst = markdown / f.removeprefix("docs/")
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        dst.write_text(docs.text[f], encoding="utf-8")
+
+    def entry(f: str) -> str:
+        title = "Documentation home" if f == "docs/index.md" else titles[f]
+        desc = descs.get(f) or ""
+        return f"- [{title}]({SITE}/{f})" + (f": {desc}" if desc else "")
+
+    listed = [f for f in order if f in docs.files]
+    rest = [f for f in docs.files if f not in listed]
+    lines = [
+        "# AXLR",
+        "",
+        "> AXLR is Underpass AI's open-source agentic execution runtime in Go: a console, one-command runs "
+        "(--exec), an mTLS HTTP/gRPC/MCP service and a JSON worker, with a policy, budget, sandbox and "
+        "correlation ids per execution, KMP for memory and MADE for tracked procedures.",
+        "",
+        f"Every link below is the Markdown source of a page of {SITE}/docs/, synced from "
+        f"{GITHUB} at commit {docs.sha[:7]}. Apache-2.0. Security policy: {GITHUB}/blob/main/SECURITY.md; "
+        f"changelog: {GITHUB}/blob/main/CHANGELOG.md.",
+        "",
+        "## Docs",
+        "",
+        *[entry(f) for f in listed],
+        "",
+        "## Optional",
+        "",
+        *[entry(f) for f in rest],
+        f"- [Install]({SITE}/install/): download, verify and set up a release",
+        f"- [Tool catalog]({SITE}/catalog/): the signed catalog of pre-forged tools",
+        f"- [Privacy and data]({SITE}/privacy/): what AXLR, the site and the registry keep",
+        "",
+    ]
+    (static_root / "llms.txt").write_text("\n".join(lines), encoding="utf-8")
 
 
 # ---------------------------------------------------------------- catalog
